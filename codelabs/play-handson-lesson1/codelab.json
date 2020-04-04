@@ -1,0 +1,24 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-04-04T13:22:24Z",
+  "id": "play-handson-lesson1",
+  "duration": 0,
+  "title": "Play Framewworkハンズオン 1章",
+  "authors": "chiristina.inching.triceps",
+  "summary": "Play Framework Handson Lesson1",
+  "source": "./tmp/mergedMd.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": null,
+  "tags": [
+    "play framework",
+    "scala"
+  ],
+  "feedback": "https://github.com/Christina-Inching-Triceps/scala-play_handson/issues",
+  "url": "play-handson-lesson1"
+}

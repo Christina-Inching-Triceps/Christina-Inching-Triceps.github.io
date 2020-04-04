@@ -1,0 +1,1256 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Play Framewworkハンズオン 1章</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="play-handson-lesson1"
+                  title="Play Framewworkハンズオン 1章"
+                  environment="web"
+                  feedback-link="https://github.com/Christina-Inching-Triceps/scala-play_handson/issues">
+    
+      <google-codelab-step label="基本情報" duration="0">
+        <h2 is-upgraded>sbtとは</h2>
+<p>主にScalaで利用されているビルドツールです。<br> 設定ファイルの記述はScalaのDSLを用いて行います。</p>
+<p>ライブラリの依存関係の解決や、デプロイのためのパッケージング、インクリメンタルなテストやコンパイルの実行などができます。<br> この後利用しますが、他にもシードからのプロジェクト生成などを行うことなども可能です。</p>
+<p>scalacコマンドなどを利用してscalaプログラムの実行を行うこともできますが、一般的にはsbtを利用してその上でScalaを利用することが多いと思います。</p>
+<p>参照: <a href="https://ja.wikipedia.org/wiki/Sbt" target="_blank">Wikipedia</a></p>
+<h2 is-upgraded>Play Frameworkとは</h2>
+<p>元々はJava向けのWebフレームワークです。<br> 2010年11月にリリースされたPlay 1.1からはScalaをサポートしており、現在広く利用されているフレームワークの一つです。</p>
+<p>MVCアーキテクチャに親和性が高く、Web Applicationに必要な一通りの機能が網羅されています。<br> ScalaでのWeb開発では利用率が高く、参考情報も豊富なため今回のハンズオンに採用しています。<br> ちなみにPlay2.3のころから後述のAkkaを統合しています。</p>
+<p>[参照]<br><a href="https://ja.wikipedia.org/wiki/Play_Framework" target="_blank">Play Framework</a><br><a href="https://www.jetbrains.com/ja-jp/lp/devecosystem-2019/scala/" target="_blank">JetBrains: どのフレームワーク / ライブラリをウェブ開発に定期的に使用していますか？</a></p>
+<h3 is-upgraded>他のScala WEB Framework</h3>
+<p>その他の主要なフレームワークについても一部ご紹介しておきます。</p>
+<ul>
+<li><a href="https://scalatra.org/" target="_blank">Scalatra</a><ul>
+<li>Gitbucket(takezoeさん作成)で利用されているフレームワークです</li>
+<li>RubyのフレームワークであるSinatraに影響を受けています</li>
+</ul>
+</li>
+<li><a href="http://skinny-framework.org/" target="_blank">Skinny Framework</a><ul>
+<li>seratchさんの作成してるフレームワークです</li>
+<li>Ruby on Railsにインスパイアされ、作成されています</li>
+</ul>
+</li>
+<li><a href="https://en.wikipedia.org/wiki/Akka_(toolkit" target="_blank">Akka</a>)  <ul>
+<li>Play Frameworkの内部でも利用されているライブラリ</li>
+<li>公式ではオープソースツールキットおよびランタイムと記載されており、フレームワークではない</li>
+<li>Sprayの後継として位置付けられていて、Akka○○という形でいくつかのライブラリに分かれている</li>
+<li>Akka httpが一番よく聞く。Http関連のモジュール</li>
+<li>Actor modelを採用している -&gt; <a href="https://ja.wikipedia.org/wiki/%E3%82%A2%E3%82%AF%E3%82%BF%E3%83%BC%E3%83%A2%E3%83%87%E3%83%AB" target="_blank">Wikipedia</a></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>オススメの開発エディタ</h2>
+<ul>
+<li>IntelliJ IDEA</li>
+<li>Visual Studio Code &amp; metals</li>
+<li>Vim or Emacs &amp; metals</li>
+</ul>
+<p>IDEについてはほぼほぼIntellij IDEAで統一されている印象です。<br> Community EditionでもScala Pluginを導入すれば、個人で開発する範囲であればあまり不自由なく開発が行えると思います。</p>
+<p>他の選択肢として、最近はMetalsというScala向けのLanguage Serverの開発が進んでおり、LSPを利用した連携機能を持つエディタであればかなり快適に開発を行うことも可能です。<br> 事実、私はVimとMetalsを利用して開発を行っています。</p>
+<p>個人的には、強いこだわりがない限りは<code>IntelliJ IDEA</code>の利用をオススメします。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="環境のセットアップ" duration="0">
+        <p>この章ではIntelliJ IDEAとPlayのセットアップを行います。<br> 既に完了されている方はスキップしていただいて問題ありません。</p>
+<h2 is-upgraded>注意事項</h2>
+<p>本ハンズオンは現在(2020年02月)時点で最新である、Play2.8を利用してハンズオンを進めていきます。</p>
+<p>また本ハンズオンは以下を前提として構築されています。</p>
+<ol type="1">
+<li>マシンにsbtがインストールされている</li>
+<li>Mac OSのパソコンを利用している</li>
+</ol>
+<p>前提となっている環境と差異がある方は各々読みかえていただいたり、適宜セットアップを行ってください。</p>
+<p><a href="https://www.scala-sbt.org/1.x/docs/ja/Installing-sbt-on-Windows.html" target="_blank">sbt インストール方法 Windowsの場合</a><br><a href="https://www.scala-sbt.org/1.x/docs/ja/Installing-sbt-on-Mac.html" target="_blank">sbt インストール方法 Macの場合</a><br><a href="https://www.scala-sbt.org/1.x/docs/ja/Installing-sbt-on-Linux.html" target="_blank">sbt インストール方法 Linuxの場合</a></p>
+<h2 is-upgraded>推奨環境</h2>
+<p>ハンズオンが作成されている環境がsbt1.3系を利用しているため、これを推奨します。</p>
+<ul>
+<li>1.3系のsbtが導入されている</li>
+</ul>
+<h2 is-upgraded>Playの導入</h2>
+<p>早速ですがPlayの導入を行っていきます。<br> sbtのコマンドからPlayのシードプロジェクトを作成してみましょう。</p>
+<p>任意のプロジェクトディレクトリを作成して、以下のコマンドを実行してください。<br> あくまで例になりますが、以下にMacでの作業をイメージしてコマンドを記載していきます。</p>
+<pre><code># 参照: https://www.playframework.com/documentation/2.8.x/NewApplication
+$ cd ~/Documents/workspace/
+$ sbt new playframework/play-scala-seed.g8
+# ... 省略
+
+This template generates a Play Scala project
+
+name [play-scala-seed]: play-handson
+organization [com.example]: com.example
+</code></pre>
+<p>name部分でプロジェクト名を指定しています。<br> organizationは個人のドメインをお持ちの方は、その逆順で記載しても良いです。<br> 今回はサンプルのためデフォルトのままの <code>com.example</code>を指定しています。</p>
+<p>これでコマンドを実行したフォルダ以下に<code>name</code>で指定したプロジェクト名のフォルダが作成されます。</p>
+<pre><code>$ tree  -L 2 | pbcopy
+.
+└── play-handson
+    ├── app
+    ├── build.sbt
+    ├── conf
+    ├── project
+    ├── public
+    ├── target
+    └── test
+</code></pre>
+<p><code>sbt new</code>が完了したら、ローカルでサーバを起動して動作を確認してみましょう。</p>
+<pre><code>$ cd {your_project_root}
+$ sbt run
+
+# .... 以下の表示がでたらサーバが起動しています。
+# --- (Running the application, auto-reloading is enabled) ---
+# 
+# [info] p.c.s.AkkaHttpServer - Listening for HTTP on /0:0:0:0:0:0:0:0:9000
+# 
+# (Server started, use Enter to stop and go back to the console...)
+</code></pre>
+<p>サーバが起動したら、ブラウザからアクセスをしてみましょう。<br><a href="http://localhost:9000" target="_blank">http://localhost:9000</a></p>
+<p>以下の画面が表示されていればOKです。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/90d87c3399aa3323.png"></p>
+<p>導入自体はこれで完了になります。<br> 簡単で良いですね。</p>
+<h2 is-upgraded>統合開発環境(IntelliJ IDEA)のセットアップ</h2>
+<p>今回はIntelliJ IDEA 無償版のセットアップの手順を記載していきます。</p>
+<p>Visual Studio Code + Metalsについては、いつの日にか手順を作ってみたいと思っております。<br> 今回は作っておりません。</p>
+<h3 is-upgraded>IDEAのダウンロード</h3>
+<p><a href="https://www.jetbrains.com/ja-jp/idea/" target="_blank">こちらのサイト</a>からIDEAのダウンロードリンクを押下してください。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/4b98bb8566eaabe9.png"></p>
+<p>各々OSに合わせたダウンロードページへ遷移します。(たぶん)<br> ダウンロードページに遷移したら、以下のボタンから無償版のIDEAをダウンロードします。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/afbbebe0e985fdbc.png"></p>
+<p>IDEAをインストールできたら、IDEAを起動して次のステップへ進んでください。</p>
+<h3 is-upgraded>IDEAへのプロジェクトの取り込み</h3>
+<p>まず、IDEAを起動したら<code>Open</code>からプロジェクトを開いていきましょう。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/a722a730773b3862.png"></p>
+<p>ファインダーから選択するときには、対象のプロジェクトを反転させてから<code>Open</code>で問題ありません。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/a575a71edc75e429.png"></p>
+<p>次にIDEAのテーマを選択します。<br> ここはお好みのテーマを選択してください。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/a84f73b5906a930.png"></p>
+<p>次のステップでは<code>shell</code>からIDEAを起動するためにPATHを通すか選択する画面になります。<br> ここもご自身で自由に設定いただいて問題ありません。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/6a67beebb2630ebf.png"></p>
+<p>次は好みの設定があるようでしたら変更いただいても問題ありませんが、基本的にはそのままで大丈夫です。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/8b9f27a9948fd341.png"></p>
+<p>この画面では印がしていあるように、Scalaのインストールだけは必須で行ってください。<br> 他のものについては任意です。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/e54fc2f8621f685e.png"></p>
+<p>これでIDEAが起動して、プロジェクトが読み込まれます。<br> またそのときに下の画像のようなポップアップが表示されたら<code>Import Changes</code>を選択しましょう。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/2a16cc54121a137a.png"></p>
+<p>sbtに変更が加わったときなどに表示されます。これをしないとsbt関連の変更が適用されないのでご注意ください。</p>
+<p><code>Enable Auto-Import</code>をすると自動で設定を更新するようになりますが、sbtの読み込みはマシンパワーを使うことがあるので私は手動が好きです。<br> ただこれはお好みで選んでいただいて構いません。</p>
+<p>では、起動が完了したら試しに<code>app/controllers/HomeController.scala</code>のファイルを開いてみましょう。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/4d002698f5ff64ea.png"></p>
+<p>ソースコード上で、21行目の<code>Action</code>に<code>Cmd</code>キーを押しながらカーソルを移動してみてください。<br> マウスが当たったときにカーソルが指マークに変わるとおもいます。<br> そこでクリックをしてみましょう。<br> Actionの実装に飛ぶことができれば設定は正常にされている状態になっています。</p>
+<p>うまく動作しないときはJDKのインストールとScalaの設定ができていないときがあります。<br> そのときは声をかけてください。</p>
+<p>これでIDEAの設定は完了になります。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="PlayFrameworkの基本的なフォルダ構成" duration="0">
+        <p>この章からCRUD機能の開発を進めていきます。</p>
+<p>開発に入る前に、Playのフォルダ構成とその中からよく利用する主なファイルについて簡単に説明します。</p>
+<pre><code>.
+├── app
+│   ├── controllers
+│   │   └─ HomeController.scala
+│   └── views
+│       ├── error
+│       ├── index.scala.html
+│       ├── main.scala.html
+│       └── main.scala.html
+├── build.sbt
+├── conf
+│   ├── application.conf
+│   ├── logback.xml
+│   ├── messages
+│   └── routes
+├── logs
+│   └── application.log
+├── project
+│   ├── build.properties
+│   └── plugins.sbt
+├── public
+│   ├── images
+│   ├── javascripts
+│   └── stylesheets
+├── target
+└── test
+</code></pre>
+<p>基本的に<code>scala</code>ファイルは<code>app</code>以下に配置していきます。<br><code>views</code>もこのapp以下に配置されていますね。</p>
+<p><code>conf</code>には設定関連が配置されています。<br><code>application.conf</code>はメインの設定ファイルで、システムから利用する設定情報などを記載します。記載された設定は<code>controller</code>にDIされたconfigインスタンスから利用できます。<br><code>logback.xml</code>はログ出力フォーマットや出力条件などを設定するものでplayで採用されている<code>logback</code>というライブラリのための設定ファイルになります。<br><code>messages</code>は多言語対応や、メッセージ管理用の設定でバリデーションメッセージなど各メッセージの管理に利用できます。<br><code>routes</code>はルーティング情報を記載するファイルです。分割して管理することなども可能です。システムから利用される際には、このファイルの情報がコンパイルされたClassファイルが利用されるようになっています。</p>
+<p><code>project</code>以下にはsbt系の設定ファイルを切り出して配置します。<br> ここで定義したものを<code>build.sbt</code>で読み込んで利用したりします。<br> 例えばscalafmtなどのプラグインを<code>plugins.sbt</code>に追加して利用したりします。</p>
+<p><code>build.sbt</code>はプロジェクトのビルド設定ファイルです。<br> ビルドするための依存ライブラリを記述したり、デプロイ設定を記載したりします。<br> またsbt shellにコマンドを追加するときにも、このファイルに追加を行っていきます。</p>
+<p>概ねフォルダやファイル名が示す通りですが、このような構成になっています。<br> ただ開発するだけであれば、app以下, routesあたりが一番よく触るファイルになると思います。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="一覧ページ作成" duration="0">
+        <p>それではPlayの機能を触りながら、一覧ページから作成していきましょう。<br> 前述の通り、今回はPlayに集中するためDBへのアクセスは行わずに作成します。</p>
+<h2 is-upgraded>ルーティング</h2>
+<p>まずはリクエストに対する処理の設定をみていきます。<br> Playでは<code>conf/routes</code>のファイルでルーティングを管理しています。<br> 今の状態の<code>conf/routes</code>ファイルを開いてみると以下のようになっていると思います。</p>
+<pre><code># ... 一部抜粋
+# An example controller showing a sample home page
+GET     /                           controllers.HomeController.index
+</code></pre>
+<p>これは<code>GET</code>Methodの<code>/</code>へのリクエストに対して<code>controllers.HomeController.index</code>を設定すると言うことになります。<br> この設定のおかげで、Playは<code>http://localhost:9000</code>、つまりルート(<code>/</code>)に対して<code>HomeController</code>の<code>index</code>アクションを実行するということを理解できるようになります。</p>
+<p>今回は一覧表示機能を作成したいので、以下のようにルーティングを設定してみましょう。</p>
+<pre><code>GET     /tweet/list                 controllers.tweet.TweetController.list
+</code></pre>
+<p>今回は意図的に<code>tweet</code>というパッケージを間に挟んでいます。<br> その場合にどうなるのか、スッとイメージができたりできなかったりすることがあるので参考として追加しているため特別な意味はありません。</p>
+<p>次は設定したルーティングに必要なコントローラーを作成してきましょう。</p>
+<h2 is-upgraded>Controllerの作成</h2>
+<p>Playでは基本的にはControllerでリクエストに対しての処理を受け取ります。<br> Controller内にあるリクエストに対するメソッドは一般的に<code>Action</code>と呼ばれます。(他のプログラミング言語、フレームワークでも同様です)</p>
+<p>ここでは<code>TweetController.scala</code>を作成して、その中で<code>list</code>アクションを作成していきます。</p>
+<p><code>app/controller/tweet/TweetController.scala</code></p>
+<pre><code>package controllers.tweet
+
+import javax.inject.{Inject, Singleton}
+import play.api.mvc.ControllerComponents
+import play.api.mvc.BaseController
+import play.api.mvc.Request
+import play.api.mvc.AnyContent
+
+/**
+  * @SingletonでPlayFrameworkの管理下でSingletonオブジェクトとして本クラスを扱う指定をする
+  * @Injectでconstructorの引数をDIする
+  * BaseControllerにはprotected の controllerComponentsが存在するため、そこに代入されている。
+  * controllerComponentsがActionメソッドを持つため、Actionがコールできる
+  *   ActionはcontrollerComponents.actionBuilderと同じ
+  */
+@Singleton
+class TweetController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
+
+  def list() =  Action { implicit request: Request[AnyContent] =&gt;
+    // Ok()はステータスコードが200な、Resultをreturnします。
+    // つまり正常系としてviews.html.tweet.listのコンテンツを返すということになります。
+    Ok(views.html.tweet.list())
+  }
+}
+</code></pre>
+<p>これで<code>http://localhost:9000/list</code>のリクエストに対してのアクションを作成できました。<br> ただまだこれではエラーが出ていると思います。<br> それはこのリクエストに対するレスポンスに指定している<code>views.html.tweet.list</code>のファイルが存在しないからです。</p>
+<p>次は一覧画面のためのhtmlを作成していきましょう。</p>
+<h2 is-upgraded>画面の作成</h2>
+<p>Playではデフォルトでは<code>Twirl</code>というテンプレートエンジンを利用して画面を作成します。<br> Twirlのファイルは<code>views/</code>直下に配置されており、拡張子が<code>.scala.html</code>となっています。<br> 今回は<code>views/tweet/list.scala.html</code>を作成していきます。</p>
+<p>このフォルダ構成が先ほどの<code>Ok(views.html.tweet.list())</code>の指定とマッピングされています。<br> 以下のようなイメージですね。<br><code>views.html</code>   =&gt; <code>views/</code><br><code>tweet.list()</code> =&gt; <code>tweet/list.scala.html</code></p>
+<p>では、ファイルを作成して、まずは以下のように中身を実装していきましょう。</p>
+<pre><code>@* これはTwirlのコメントです。
+以下はview templeteでの引数を受け取る記載です。
+今回は引数が不要のため @() となっています。
+*@
+@()
+
+@main(&#34;一覧画面&#34;) {
+  &lt;h1&gt;一覧画面です&lt;/h1&gt;
+}
+</code></pre>
+<p>@mainの部分については後ほど説明をしますので、今は「h1の表示を出すんだな」くらいの理解で問題ありません。</p>
+<p>ここまで出来たら、一度ページへアクセスして動作を確認してみましょう。 以下のような画面が表示されればOKです。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/bb998bf0b2fca007.png"></p>
+<h2 is-upgraded>モデルの作成とリスト表示</h2>
+<p>単純なページ表示は行えたので、次はモデルを作成してそのモデルを一覧表示してみます。</p>
+<h3 is-upgraded>モデルの作成</h3>
+<p>今回利用する<code>app/models/Tweet.scala</code>を作成してきましょう。</p>
+<pre><code>package models
+
+// case classについての説明は省略
+// 参考: https://docs.scala-lang.org/ja/tour/case-classes.html
+case class Tweet(
+  id:      Option[Long],
+  content: String
+)
+</code></pre>
+<p>今のところは非常にシンプルなクラスになりました。<br><code>case class</code>についての説明は省略しますが、非常に雑に説明すると<code>toString</code>, <code>equals</code>がいい感じに実装されていたり<code>apply</code>や<code>unapply</code>メソッドなどが実装されている便利なClassです。</p>
+<h3 is-upgraded>モデルをViewへ渡す</h3>
+<p>先ほど作成したモデルをコントローラからViewへ渡してみましょう。</p>
+<p><code>app/controllers/tweet/TweetController.scala</code></p>
+<pre><code>// ... 省略
+def list() =  Action { implicit request: Request[AnyContent] =&gt;
+  // 1から10までのTweetクラスのインタンスを作成しています。
+  // 1 to 10だとIntになってしまうの1L to 10LでLongにしています。
+  val tweets: Seq[Tweet] = (1L to 10).map(i =&gt; Tweet(Some(i), s&#34;test tweet${i.toString}&#34;))
+
+  // viewの引数としてtweetsを渡します。
+  Ok(views.html.tweet.list(tweets))
+}
+</code></pre>
+<p>今回はDBを利用しないので、Controller側に決め打ちで実装しています。<br><code>views.html.tweet.list()</code>に引数としてtweetsを渡すところまではできました。<br> 次はView側で引き渡されたTweetを受け取って表示をしてみます。</p>
+<h3 is-upgraded>Viewでモデルを受け取り表示</h3>
+<p>早速コードを修正していきましょう。</p>
+<p><code>views/tweet/list.scala.html</code></p>
+<pre><code>@* Twirl側でもクラスを正しく認識するためにscalaファイルと同様にimportが必要です。  *@
+@import models.Tweet
+
+@*
+以下はview templeteでの引数を受け取る記載です。
+今回はTweetの一覧を取得するため@(tweets: Seq[Tweet]) となっています。
+*@
+@(tweets: Seq[Tweet])
+
+@main(&#34;一覧画面&#34;) {
+  &lt;h1&gt;一覧画面です&lt;/h1&gt;
+  &lt;ul&gt;
+    @* Twirlでのfor記法です。forと(の間にスペースを入れると動かないので注意してください *1 *@
+    @for(tweet &lt;- tweets) {
+    &lt;li&gt;@tweet.content&lt;/li&gt;
+    }
+  &lt;/ul&gt;
+}
+</code></pre>
+<p>説明についてはプログラム上のコメントに記載してありますが、新しくimportと引数の受け取り、受け取ったインスタンの出力を追加してあります。<br> Twirlの記法については<a href="https://www.playframework.com/documentation/ja/2.3.x/ScalaTemplates" target="_blank">こちら</a>を参考にしてください。</p>
+<p>*1:<br><img style="width: 450.00px" src="img/41ba60940cc9652f.png"></p>
+<p>これで一覧表示の実装は完了です。<br> ブラウザから動作を確認してみましょう。<br><a href="http://localhost:9000/tweet/list" target="_blank">http://localhost:9000/tweet/list</a></p>
+<p>以下のように表示されていればOKです。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/d67ae1282871e102.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="詳細ページ作成" duration="0">
+        <p>一覧が作成できたので、次は詳細ページを作成していきます。<br> データがコンテンツくらいしかないので寂しいページにはなりますが、復習もかねて一覧ページを作成したのと同じように実装を進めていきます。</p>
+<h2 is-upgraded>ルーティングの作成</h2>
+<p>詳細ページはどのデータの詳細情報を表示するか判断するための情報が必要になります。<br> 今回はモデルにあるIDでデータを特定するように実装を進めます。<br> 以下のようにroutesファイルにルーティングを追加してください。</p>
+<p><code>conf/routes</code></p>
+<pre><code>GET     /                           controllers.HomeController.index
+GET     /tweet/list                 controllers.tweet.TweetController.list
+# 追加
+GET     /tweet/:id                  controllers.tweet.TweetController.show(id: Long)
+</code></pre>
+<p><code>/tweet/:id</code>という記載がでてきました。<br> ここでは<code>:id</code>箇所のデータをパラメータとして受け取っています。<br> 例えば<code>http://localhost:9000/tweet/1</code>のとき<code>TweetController</code>の<code>show</code>メソッドに<code>1</code>が引数として渡されます。</p>
+<p>またパラメータ受け取りは今回のようなURL文字列からの取得以外にも、通常通りのQueryStringからの取得も可能です。</p>
+<p>例えば以下のようなroutesがあったとします。</p>
+<pre><code>GET     /tweet/detail               controllers.tweet.TweetController.show(id: Long)
+</code></pre>
+<p>このとき<code>http://localhost:9000/tweet/detail?id=1</code>のようなURLであれば、showに1が渡されます。</p>
+<h2 is-upgraded>アクションとViewの追加</h2>
+<p>routesに追加ができたので、そこに紐づくアクションとViewを追加してきます。</p>
+<p><code>app/controllers/tweet/TweetController.scala</code></p>
+<pre><code>@Singleton
+class TweetController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
+  // DBのMockとして利用したいので、クラスのフィールドとして定義し直す
+  val tweets: Seq[Tweet] = (1L to 10L).map(i =&gt; Tweet(Some(i), s&#34;test tweet${i.toString}&#34;))
+
+  def list() =  ... 省略 ...
+
+  def show(id: Long) = Action { implicit request: Request[AnyContent] =&gt;
+    Ok(views.html.tweet.show(
+      // tweetsの一覧からIDが一致するものを一つ取得して返す
+      // getは良くない書き方なため、後のセクションで修正する
+      tweets.find(_.id.get == id).get
+    ))
+  }
+}
+
+</code></pre>
+<p>まずtweetsをフィールドとして定義し直しています。<br> これはDBなしでデータを一定期間保持しておくための実装なのです。</p>
+<p>showメソッドの中でOption型を直接getしていますが、これはnullに対して安全な処理ができるメリットを捨ててしまうことになるため、後ほど修正していきます。</p>
+<p><code>views/tweet/show.scala.html</code></p>
+<pre><code>@import models.Tweet
+@(tweet: Tweet)
+
+@main(&#34;詳細画面&#34;) {
+  &lt;h1&gt;詳細画面です&lt;/h1&gt;
+  &lt;div id=&#34;detail&#34;&gt;
+    &lt;div&gt;id: @tweet.id&lt;/div&gt;
+    &lt;div&gt;id: @tweet.content&lt;/div&gt;
+  &lt;/div&gt;
+}
+</code></pre>
+<p>TwirlについてはSeqだった引数がTweetになっているくらいの変化しかありません。</p>
+<p>ここまでできたら、以下のURLにアクセスして画面が正常に表示できるか確認してみましょう。<br><a href="http://localhost:9000/tweet/1" target="_blank">http://localhost:9000/tweet/1</a></p>
+<p>以下のように表示されていればOKです。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/efc5bfc9aebbcbcd.png"></p>
+<h2 is-upgraded>一覧からのリンク作成</h2>
+<p>詳細ページ自体は完成したので、次は先きほど作成した一覧ページからリンクを通してみます。</p>
+<p><code>views/tweet/list.scala.html</code></p>
+<pre><code>@import models.Tweet
+@(tweets: Seq[Tweet])
+
+@main(&#34;一覧画面&#34;) {
+  &lt;h1&gt;一覧画面です&lt;/h1&gt;
+  &lt;ul&gt;
+    @for(tweet &lt;- tweets) {
+    &lt;li&gt;
+      @* よくウェブ上で @routes.HomeController.index のようなものをみるがこれはtwirlではデフォルトでcontrollers.routesがインポートされているためcontroller部分が省略されているだけ。*@
+      &lt;a href=&#34;@controllers.tweet.routes.TweetController.show(tweet.id.getOrElse(0))&#34;&gt;@tweet.content&lt;/a&gt;
+    &lt;/li&gt;
+    }
+  &lt;/ul&gt;
+}
+</code></pre>
+<p>href部分ではroutesファイルの設定から、紐づくURLを作成するようにしてあります。<br> 書き方は<code>{Controllerのパッケー�</code>��}.routes.{Controller名}となります。</p>
+<p>コメントにも記載していますが、ウェブ上で良くみる<code>@routes</code>から始まる書き方は実は自動的に<code>controllers.routes</code>がインポートされているためにcontrollersを省略された状態になっています。</p>
+<p>ここを理解していないと独自でパッケージを切ったりしていく時に、非常に苦労することになるので頭の隅に残しておきましょう。</p>
+<p>では、最後に動作確認です。<br><a href="http://localhost:9000/tweet/list" target="_blank">http://localhost:9000/tweet/list</a></p>
+<p>以下のようにリンクが表示され、リンククリックで詳細ページが表示されたら完了です。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/e470f5872339d82.png"></p>
+<h2 is-upgraded>エラーページ作成</h2>
+<p>先ほど省略したエラーページの表示を行います。<br> まずは実装からみてみましょう。</p>
+<p><code>app/controllers/tweet/TweetController.scala</code></p>
+<pre><code>def show(id: Long) = Action { implicit request: Request[AnyContent] =&gt;
+    // idが存在して、値が一致する場合にfindが成立
+    tweets.find(_.id.exists(_ == id)) match {
+      case Some(tweet) =&gt; Ok(views.html.tweet.show(tweet))
+      // status codeを404にしつつページを返しています。
+      case None        =&gt; NotFound(views.html.error.page404())
+   }
+  }
+</code></pre>
+<p>この実装では元々<code>get</code>をしてしまっていた部分についても、改善するようにしています。<br> tweetのidがURLから受け取ったidと一致するものを<code>find</code>しています。<br><code>exists</code>はNone.existsの場合に常に<code>false</code>になります。</p>
+<p>今回はデータのない場合の表示なのでstatusとして404(NotFound)を指定しています。<br> Ok, NotFoundは同じクラスなので同様の使い方が可能です。</p>
+<p>次にNotFoundで指定してるページを作成します。</p>
+<p><code>views/error/page404.scala.html</code></p>
+<pre><code>@()
+
+@main(&#34;ページが見つかりません&#34;) {
+  &lt;h1&gt;ページが見つかりません。&lt;/h1&gt;
+}
+</code></pre>
+<p>ここまでできたら動作を確認してみましょう。<br> この状態で存在しないTweetを参照しようとすると以下のようになります。<br><a href="http://localhost:9000/tweet/1111" target="_blank">http://localhost:9000/tweet/1111</a></p>
+<p class="image-container"><img style="width: 450.00px" src="img/179d9e2b8adcdaf4.png"></p>
+<p>ステータスコードが404で、作成したページが表示されていることが確認できますね。<br> エラーページを作成する方法は以上です。</p>
+<h2 is-upgraded>HomeControllerから一覧へリダイレクト</h2>
+<p>ここまでできたら<code>/</code>ページへのアクセスを一覧ページリダイレクトしてみましょう。</p>
+<p><code>app/controllers/HomeController.scala</code></p>
+<pre><code>package controllers
+
+import javax.inject._
+import play.api._
+import play.api.mvc._
+
+@Singleton
+class HomeController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
+
+  def index() = Action { implicit request: Request[AnyContent] =&gt;
+    Redirect(tweet.routes.TweetController.list())
+  }
+}
+</code></pre>
+<p>ここでは自分自身がcontrollersパッケージにいるので、リバースルーティングはその先にあるパッケージからの記載になります。<br> 今回は <code>controllers.tweet.routes....</code> を呼び出したいので <code>tweet.routes...</code> で動作します。</p>
+<p>これでリダイレクトの設定は完了です。<br> こういうところハマりやすいので、参考になれば幸いです。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="登録ページの作成" duration="0">
+        <p>次は登録機能を作成していきます。<br> 例によってconf, controllerと修正していきましょう。</p>
+<p>登録処理は今までの機能とは違い、画面からformの値を受け取るという動作があります。<br> Formはよく利用する機能なので登録・更新と処理を書く中で少しずつ慣れていきましょう。</p>
+<h2 is-upgraded>ルーティングの追加</h2>
+<p><code>conf/routes</code></p>
+<pre><code>GET     /                           controllers.HomeController.index
+GET     /tweet/list                 controllers.tweet.TweetController.list
+GET     /tweet/:id                  controllers.tweet.TweetController.show(id: Long)
+# 下の2つを追加
+GET     /tweet/store                controllers.tweet.TweetController.register
+# POST    /tweet/store                controllers.tweet.TweetController.store
+</code></pre>
+<p>今回は<code>/tweet/store</code>というルーティングをget, postのそれぞれで追加しています。<br> これは登録用画面の表示と、実際に登録処理を行うアクションで2つのアクションが必要になるためです。</p>
+<p>またルーティングは追加してみましたが、実はこのルーティングは正常に動作しません。<br> 理由は<code>/tweet/:id</code>の設定の方が上位に書かれているからです。<br> playのルーティングは先勝ちになっているようで<code>/tweet/store</code>にアクセスしようとすると<code>:id</code>の部分に<code>store</code>が取られてしまいます。</p>
+<p>これを回避するには2つの方法があります。</p>
+<ol type="1">
+<li><code>/tweet/:id</code>が数値のみをとるように変更する</li>
+<li>storeのルーティングを上にあげる</li>
+</ol>
+<p>基本的には1の方が良いので、ここでは1の方法で修正してみます。</p>
+<p><code>conf/routes</code></p>
+<pre><code>GET     /tweet/$id&lt;[0-9]+&gt;          controllers.tweet.TweetController.show(id: Long)
+</code></pre>
+<p>これで<code>show</code>のルーティングでは0-9の数字しか受け付けなくなりました。</p>
+<h2 is-upgraded>登録用画面の実装</h2>
+<p>続いてコントローラを修正していきますが、今回はアクションの追加のみではなくFormオブジェクトの設定も行なっていきます。</p>
+<h3 is-upgraded>Formの追加</h3>
+<p>まずFormオブジェクトの追加を行っていきます。<br> Formオブジェクトを利用することでPOSTでの値受け取りをフレームワーク側に移譲しつつ、バリデーションなどの処理を簡単に適用することができます。</p>
+<p>習うよりコードを見た方が早いと思うので、早速コードをみてみましょう。<br> Formはいくつかの書き方が出来るので複数の書き方を記載していますが、結論パターン2の書き方で実装を進めていきます。。</p>
+<pre><code>// パターン2用のcase class
+case class TweetFormData(content: String)
+
+class TweetController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
+  // ...省略
+
+  // パターン1: 既存クラスを使いまわして、apply, unapplyを自前で書くパターン
+  val form1: From[Tweet] = Form(
+    // html formのnameがcontentのものを140文字以下の必須文字列に設定する
+    mapping(
+      &#34;content&#34; -&gt; nonEmptyText(maxLength = 140)
+    )
+    // apply, unapplyを自分で書いているパターン
+    ((content: String)  =&gt; Tweet(None, content))
+    ((v: Tweet)         =&gt; Some(v.content))
+  )
+
+  // パターン2: Form用にcase classを作成するパターン(推奨)
+  val form2: From[Tweet] = Form(
+    mapping(
+      &#34;content&#34; -&gt; nonEmptyText(maxLength = 140)
+    )(TweetFormData.apply)(TweetFormData.unapply)
+  )
+
+
+  // パターン3: tuple, singleを利用するパターン
+  // 受けとるデータが単数なのでsingleとしていますが、複数の場合にはtuple()になります。 
+  val form3 = Form(
+    single(
+      &#34;content&#34; -&gt; nonEmptyText(maxLength = 140)
+    )
+  )
+
+
+  // ...省略
+}
+</code></pre>
+<p><code>single</code>, <code>tuple</code>と<code>mapping</code>の使い分けは、Formから受け取った値をクラスにマッピングしたいときには<code>mapping</code><br> そのまま利用したいときには<code>single</code>, <code>tuple</code>を利用する、なります。</p>
+<p>デフォルトで利用できるバリデータは他にも<code>email</code>, <code>number</code>, <code>boolean</code>などがあります。<br> Formの使い方の詳細は以下の公式ドキュメントを参照してください。<br><a href="https://www.playframework.com/documentation/2.8.x/ScalaForms" target="_blank">参照: Form submission and validation</a></p>
+<p>今回利用するフォームがオブジェクトができたので、次はルーティングに対応するアクションを追加していきましょう。</p>
+<h3 is-upgraded>画面表示用アクションの追加</h3>
+<p>まずは簡単な登録画面表示のアクションから作成していきます。</p>
+<p><code>app/controllers/tweet/TweetController.scala</code></p>
+<pre><code>// controllersクラスの外に記載
+case class TweetFormData(content: String)
+
+// ...省略
+val form = Form(
+    // html formのnameがcontentのものを140文字以下の必須文字列に設定する
+    mapping(
+      &#34;content&#34; -&gt; nonEmptyText(maxLength = 140)
+    )(TweetFormData.apply)(TweetFormData.unapply)
+  )
+
+// ...省略
+def register() = Action { implicit request: Request[AnyContent] =&gt;
+  Ok(views.html.tweet.store(form))
+}
+
+// コンパイルエラー回避用に何もしない登録用のstoreメソッドも作成
+def store() = Action { implicit request: Request[AnyContent] =&gt;
+  NoContent
+}
+</code></pre>
+<p>シンプルですね。<br> ここで先ほど作成したformを画面へ渡しています。<br> 先ほどの実装ではフォームをいくつか作成していましたが、ここでは<code>form2</code>のみを残して<code>form</code>にリネームしています。</p>
+<h3 is-upgraded>viewの作成</h3>
+<p>アクションが作成できたのでViewを追加します。<br> 今までのViewを参考にしつつ、以下のようにファイルを作成していきましょう。</p>
+<p><code>views/tweet/store.scala.html</code></p>
+<pre><code>@import controllers.tweet.TweetFormData
+@(form: Form[TweetFormData])
+
+@main(&#34;登録画面&#34;) {
+  &lt;h1&gt;登録画面です&lt;/h1&gt;
+  @helper.form(action = controllers.tweet.routes.TweetController.store()) {
+    @helper.inputText(form(&#34;content&#34;))
+    &lt;input type=&#34;submit&#34; value=&#34;登録&#34;&gt;
+  }
+}
+</code></pre>
+<p>今回新しく<code>@helper</code>というパッケージを利用しています。<br> ここにはFormを利用するためのヘルパー関数がいくつも用意されています。<br> importに<code>@import helper._</code>を追加して利用するのも、わりと一般的です。</p>
+<p>ここまで出来たら、一度コンパイルしてみましょう。<br> そうすると以下のようにエラーになると思います。</p>
+<pre><code>$ sbt compile
+
+An implicit MessagesProvider instance was not found.  Please see https://www.playframework.com/documentation/latest/ScalaForms#Passing-MessagesProvider-to-Form-Helpers
+[error]     @helper.inputText(form(&#34;content&#34;))
+[error]                      ^
+[error] one error found
+[error] (Compile / compileIncremental) Compilation failed
+[error] Total time: 0 s, completed 2020/02/24 21:37:20
+</code></pre>
+<p>これはinputTextが暗黙の引数としてmessagesProviderのインスタンスを必要としているために発生します。<br> 何をヒントに修正していけばいいのかは、エラーメッセージの中に書かれていますね。<br><a href="https://www.playframework.com/documentation/latest/ScalaForms#Passing-MessagesProvider-to-Form-Helpers" target="_blank">Passing-MessagesProvider-to-Form-Helpers</a></p>
+<p>implicitが出てくると非常に難しく感じてしまいますが、最初は直接手で引数を渡すと面倒くさいから自動で渡すようにしている、くらいの理解で良いと思います。</p>
+<p>エラー修正のため、messagesProviderをviewへ渡していきます。</p>
+<pre><code>@import controllers.tweet.TweetFormData
+@* 以下の引数ブロックにimplicit用の引数を追加 *@
+@(form: Form[TweetFormData])(implicit messageProvider: MessagesProvider)
+
+@main(&#34;登録画面&#34;) {
+  &lt;h1&gt;登録画面です&lt;/h1&gt;
+  @helper.form(action = controllers.tweet.routes.TweetController.store()) {
+    @helper.inputText(form(&#34;content&#34;))
+    &lt;input type=&#34;submit&#34; value=&#34;登録&#34;&gt;
+  }
+}
+</code></pre>
+<p>この状態でもう一度コンパイルをしてみると、どうでしょう。</p>
+<pre><code>$ sbt compile
+
+An implicit MessagesProvider instance was not found.  Please see https://www.playframework.com/documentation/latest/ScalaForms#Passing-MessagesProvider-to-Form-Helpers
+[error]     Ok(views.html.tweet.store(form))
+[error]                              ^
+[error] one error found
+[error] (Compile / compileIncremental) Compilation failed
+
+</code></pre>
+<p>先ほどと同様のエラーですが、エラーが出る箇所がコントローラまで上ってきています。<br> そのため、次はコントローラを修正してあげる必要があります。<br> 修正方法はエラーメッセージの中にある<code>Please see</code>のリンク先を見ればわかるようになっています。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/5f8002b640a891ec.png"></p>
+<p>こちらを参考にコントローラを直してみましょう。</p>
+<p><code>app/controllers/tweet/TweetController.scala</code></p>
+<pre><code>class TweetController @Inject()(val controllerComponents: ControllerComponents) 
+extends BaseController with I18nSupport {
+</code></pre>
+<p><code>with</code>句で新しくI18nSupportをmixinしています。<br> これでコンパイルをするとエラーが解決されているのが確認できるはずです。</p>
+<pre><code>$ sbt compile
+[success] Total time: 0 s, completed 2020/02/24 22:09:40
+</code></pre>
+<p>ここまで出来たら、一度登録画面を表示してみましょう。<br><a href="http://localhost:9000/tweet/store" target="_blank">http://localhost:9000/tweet/store</a></p>
+<p>以下のように画面が表示されていればOKです。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/967cd06b66a6a1d9.png"></p>
+<p>ちょっと不格好ですが、この辺りは後ほど修正していきます。<br> 少し長丁場になっていますが、次は登録処理を作成していきましょう。</p>
+<h2 is-upgraded>登録処理の実装</h2>
+<p>登録処理の実装は今までのアクションと比べて少し複雑になります。<br> 具体的には画面から受け取ったフォームデータの利用や、入力ミスがあった場合の元画面でのエラー表示などがあります。</p>
+<h3 is-upgraded>tweetsのSeqをmutable化</h3>
+<p>tweetのインスタンスデータを保持しつつ、可変な状態にするために<code>tweets</code>フィールドを可変配列に置き換えていきます。<br> Scalaではimmutableなオブジェクトやリストを利用するのが基本のため、あくまでサンプルのための実装になります。</p>
+<p><code>app/controllers/tweet/TweetController.scala</code></p>
+<pre><code>class TweetController @Inject()(val controllerComponents: ControllerComponents) extends BaseController with I18nSupport {
+  // DBのMockとして利用したいので、mutableなクラスのフィールドとして定義し直す
+  val tweets = scala.collection.mutable.ArrayBuffer((1L to 10L).map(i =&gt; Tweet(Some(i), s&#34;test tweet${i.toString}&#34;)): _*)
+
+// ...省略
+
+
+  def list() =  Action { implicit request: Request[AnyContent] =&gt;
+    // 型エラー回避のためtweets.toSeqでimmutableSeqに変換してから画面に渡す
+    Ok(views.html.tweet.list(tweets.toSeq))
+  }
+</code></pre>
+<p>これでtweetsをデータ保持しつつ可変な配列に変更できました。</p>
+<h3 is-upgraded>登録用アクションの実装</h3>
+<p>tweetsを可変Seqに変更できたので、改めて登録処理を実装していきます。<br> 作成が完了した処理をみてみましょう。</p>
+<pre><code>def store() = Action { implicit request: Request[AnyContent] =&gt;
+  // foldでデータ受け取りの成功、失敗を分岐しつつ処理が行える
+  form.bindFromRequest().fold(
+    // 処理が失敗した場合に呼び出される関数
+    // 処理失敗の例: バリデーションエラー
+    (formWithErrors: Form[TweetFormData]) =&gt; {
+      BadRequest(views.html.tweet.store(formWithErrors))
+    },
+    // 処理が成功した場合に呼び出される関数
+    (tweetFormData: TweetFormData) =&gt; {
+      // 登録処理としてSeqに画面から受け取ったコンテンツを持つTweetを追加
+      tweets += Tweet(Some(tweets.size + 1L), tweetFormData.content)
+      // 登録が完了したら一覧画面へリダイレクトする
+      Redirect(&#34;/tweet/list&#34;)
+      // 以下のような書き方も可能です。基本的にはtwirl側と同じです
+      // 自分自身がcontrollers.tweetパッケージに属しているのでcontrollers.tweetの部分が省略されています。
+      // Redirect(routes.TweetController.list())
+    }
+  )
+}
+</code></pre>
+<p><code>bindFromRequest</code>はimplicitでrequestを受け取っています。<br> なので、このリクエスト情報からformで設定したマッピング情報を元に入力チェックと値変換を行います。<br> その処理の成否によって<code>fold</code>で処理を分岐しているという動きです。</p>
+<p>失敗時には400のBadRequestとして受け取ったフォームデータにエラーメッセージを追加して元の画面に戻しています。<br> 成功時には受け取ったデータから新しいTweetを作成して一覧画面へリダイレクトしています。</p>
+<p>ちなみに、<code>fold()()</code>で失敗を左、成功を右のような動きは<code>Option</code>や<code>Either</code>にも似たようなものがあります。<br><code>Seq</code>だとまた雰囲気の違う動きになるのですが、この辺の違いは圏論でいうところの<code>Catamorphism</code>というものを理解するとわかるようになるみたいです。<br> 私はこの辺りは良くわからないので省略しますが、このfoldの使い方は割とよくあるみたいなので気が向いた際に学習してみたり、頭の隅に置いておくとコードが読みやすくなるかもしれません。</p>
+<p>では、処理が書けたの実際に登録画面から登録してみてください。 <a href="http://localhost:9000/tweet/store" target="_blank">http://localhost:9000/tweet/store</a></p>
+<p>登録してみるとどのようになるでしょうか。<br> 以下のような画面になっていないでしょうか。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/8596657a8ea5e8bc.png"></p>
+<p>これだけだとよくわからないですよね。<br> こういうときはコンソールに出ているメッセージを確認してみましょう。</p>
+<pre><code>[warn] p.filters.CSRF - [CSRF] Check failed because no or invalid token found in body for /tweet/store
+[warn] p.filters.CSRF - [CSRF] Check failed with NoTokenInBody for /tweet/store
+</code></pre>
+<p>サーバのログにこのようなメッセージが出ていました。<br> CSRFのチェックが正常に行われずにエラーになっているようです。</p>
+<p>実はPlayではPOST, PUTなどはデフォルトでCSRFチェックがかかるようになっています。<br> そのため画面からトークンを渡しておらずエラーになるということですね。<br> 詳細は<a href="https://www.playframework.com/documentation/2.8.x/ScalaCsrf" target="_blank">こちら</a>に記載されています。</p>
+<p>では、公式サイトの情報に習って修正を行っていきましょう。</p>
+<pre><code>@import controllers.tweet.TweetFormData
+@* CSRFトークンの生成ヘルパーで、requestHeaderを必要としているのでこちらも暗黙パラメートして渡しています。 *@
+@(form: Form[TweetFormData])(implicit messagesProvider: MessagesProvider, requestHeader: RequestHeader)
+
+@main(&#34;登録画面&#34;) {
+  &lt;h1&gt;登録画面です&lt;/h1&gt;
+  @helper.form(action = controllers.tweet.routes.TweetController.store()) {
+    @* CSRFトークンの生成ヘルパーを呼び出している。これでいい感じにトークンが用意されます。 *@
+    @helper.CSRF.formField
+    @helper.inputText(form(&#34;content&#34;))
+    &lt;input type=&#34;submit&#34; value=&#34;登録&#34;&gt;
+  }
+}
+</code></pre>
+<p>今回implicitの引数を一つ追加しています。<br> implicitと書かれていませんが、implicitにした引数のブロックは全部implicitになりますし、それ以外は定義できません。<br> 以下のようなことをするとコンパイルエラーになります。<br><code>(messagesProvider: MessagesProvider, implicit requestHeader: RequestHeader)</code></p>
+<p>もう一つこのrequestHeaderを利用して、CSRFトークンを生成するヘルパーを呼び出しています。<br> 実際に実装の定義を見ていると以下のようになっており、implicitで引数を求めていますね。<br><code>def formField(implicit request: RequestHeader): Html</code></p>
+<p>それでは今度こそ動作をみてみましょう。<br><a href="http://localhost:9000/tweet/store" target="_blank">http://localhost:9000/tweet/store</a></p>
+<h4 is-upgraded>バリデーションエラーの場合</h4>
+<p class="image-container"><img style="width: 450.00px" src="img/cc33caed30fa0a53.png"></p>
+<h4 is-upgraded>登録成功の場合</h4>
+<p class="image-container"><img style="width: 450.00px" src="img/595edf45aaab049d.png"></p>
+<p>それぞれこのようになっていれば完了です。</p>
+<h2 is-upgraded>表示・テンプレートの調整</h2>
+<p>基本的にはこれまでの部分で登録処理は完成ですが、英語でメッセージが出ていたり、フォームヒントが出ていることが見栄え的に良くないので、その部分の対応の仕方を記載します。</p>
+<h3 is-upgraded>日本語メッセージの表示</h3>
+<p>まずエラーメッセージやフォームへの注釈表示を日本語に対応してみます。</p>
+<p>多言語化対応はi18nの機能で実装されており、それぞれの言語に合わせたメッセージを設定することで霧狩ることができます。</p>
+<p>今回は例として日本語への対応を行ってみます。</p>
+<h4 is-upgraded>application.confの設定</h4>
+<p>まずはどの言語に対応するかを<code>application.conf</code>へ設定していきます。</p>
+<p><code>conf/application.conf</code></p>
+<pre><code># application.confでは#の行がコメントになります。  
+
+# i18n設定
+# conf/{play.i18n.path}messagesとなる
+play.i18n.path         = &#34;messages/&#34;
+
+# HTTP HeaderのAccept-Languageの値と比較を行い許可する対象を設定する
+# messages.{langs}のファイルが読み込み対象になる
+play.i18n.langs        = [&#34;ja&#34;, &#34;en-US&#34;]
+</code></pre>
+<p>今回設定しているのは2つ。<br> 1つ目がメッセージファイルの配置場所です。<br> デフォルトでは<code>conf/</code>直下がファイルの配置場所になっていますが、各言語のファイルが並ぶと見辛いので場所を変更しています。<br> 通常日本語くらいしか利用しないとは思いますが、フォルダ位置を変更したくなる人もいるとおもうため、そこでハマってしまう人を減らす意図も有ります。</p>
+<p>2つ目が対応するAccept-Languageの値の指定です。<br> 今回は日本語とアメリカ英語を対象にしています。</p>
+<p>このようにするとAccept-Languageヘッダに<code>ja</code>、<code>en-US</code>の文字があったときに優先度に合わせてplayが自動的に読み込みに行く<code>message</code>ファイルを切り替えてくれます。</p>
+<p>以下の部分にあるものです。<br><img style="width: 450.00px" src="img/7d9d04d2d1d5b3eb.png"></p>
+<p>このとき対象のファイルは<code>messages.{lang}</code>というフォーマットになります。<br> 今回だと<code>messages.ja</code>と<code>messages.en-US</code>になります。</p>
+<p>またどの設定にも当てはまらない場合にはデフォルトファイルとして<code>messages</code>ファイルを読みに行くようになっています。</p>
+<p>一点注意が必要で、全てのクライアントが適切にAccept-Languageを指定してくれるとは限らないということです。<br> どのように管理するかは自由ですが、上記忘れずにおかないと人によってはメッセージが違う、という不具合に繋がってしまいます。</p>
+<h4 is-upgraded>messagesファイルの設定</h4>
+<p>application.confの設定が終わったので、messagesファイルを作成します。<br> 今回はen-USは省略して日本語とデフォルトだけ作成してみます。</p>
+<p>まずはファイルを設定する前の状態で、表示をしてみましょう。<br><a href="http://localhost:9000/tweet/store" target="_blank">http://localhost:9000/tweet/store</a><br> 入力なしで登録しようとすると以下のように表示されると思います。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/da2d8745c7d00fe3.png"></p>
+<p>この未設定状態のメッセージが設定ファイルに記載するときのkey名になっているので、覚えておいてください。<br> 動きが確認できたら、改めてmessagesファイルの設定を行っていきましょう。</p>
+<p><code>conf/messages/messageconf/messages/message.ja</code></p>
+<pre><code># https://www.playframework.com/documentation/latest/ScalaI18N
+# 上記リンクに用意されているメッセージ一覧や利用方法が記載されています。
+error.invalid=入力が不正です
+error.required=入力は必須です
+error.maxLength={0}文字以内で入力してください
+
+# 未設定状態では、このkey名が画面に表示されるのでそれをみて設定をすれば良いです。
+constraint.required=*
+constraint.maxLength=最大{0}文字まで
+</code></pre>
+<p>これで今回必要な分の設定は完了です。<br> ブラウザからメッセージを確認してみてください。<br><a href="http://localhost:9000/tweet/store" target="_blank">http://localhost:9000/tweet/store</a></p>
+<p class="image-container"><img style="width: 450.00px" src="img/d5d9ffc7574c3979.png"></p>
+<p>これでmessagesの設定は完了です。</p>
+<p>ちなみにこの設定ファイルでのkey名ですが、これはリンク先のページもに一覧で記載されていますので、目を通していただけるとどんなものがあるのかわかると思います。</p>
+<h3 is-upgraded>入力のヒント表示制御</h3>
+<p>続いてFormHelperの制御を行っていきます。<br> 今の実装だとconstraintsが全て表示されてしまって見辛いので、これを非表示にしてみます。<br> 設定できる値は以下を参照ください。<br><a href="https://www.playframework.com/documentation/ja/2.4.x/ScalaCustomFieldConstructors" target="_blank">公式ドキュメント</a></p>
+<p><code>app/views/tweet/store.scala.html</code></p>
+<pre><code>@import controllers.tweet.TweetFormData
+@(form: Form[TweetFormData])(implicit messagesProvider: MessagesProvider, requestHeader: RequestHeader)
+
+@main(&#34;登録画面&#34;) {
+  &lt;h1&gt;登録画面です&lt;/h1&gt;
+  @helper.form(action = controllers.tweet.routes.TweetController.store()) {
+    @helper.CSRF.formField
+    @* contentはフリー入力系の項目なのでtextareaに変更しています。*@
+    @helper.textarea(form(&#34;content&#34;),
+      @* 通常のhtml属性を設定。&#39;を先頭につけて -&gt; で値を渡します。 *@
+      &#39;rows -&gt; 7, &#39;cols -&gt; 40,
+      @* helperに渡す属性です。 &#39;をつけて-&gt;で値を渡すのは同様です。 *@
+      &#39;_label -&gt; &#34;ツイート&#34; ,&#39;_showConstraints -&gt; false
+    )
+    &lt;input type=&#34;submit&#34; value=&#34;登録&#34;&gt;
+  }
+}
+</code></pre>
+<p>Tweetのcontentはinput textにするには文字数が多すぎるのでtextareに変更しました。<br> またtextareaのサイズ調整にrows, colsのhtmlのtextareタグにある属性を利用しています。<br> 基本的にform helperへの値渡しは(symbol, value)の形式で渡します。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/e46ee77e24975540.png"></p>
+<p>&#39;_label, ‘_showConstraintsはhelper側で用意されている属性です。<br> 今回はこの2つを設定してみました。<br> では、この状態で動きを見てみましょう。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/8b48e128023857c1.png"></p>
+<p>このようにhtmlの属性と、helperの動きを制御できました。</p>
+<p>登録を画面を通しての基本的はtwirl, formの利用方法はこれで完了です。<br> 次はおさらいも兼ねて変更画面を作成してきましょう。</p>
+<p>ところで、現在symbolは非推奨になってきているはずなのですが、今後play(twirl?)はどうするのでしょうね？</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="更新ページの作成" duration="0">
+        <p>更新ページの作成は今まで作ってきたものを参考に進めていけば、基本的には問題なく作成できます。<br> 早速それぞれ必要なファイルを作成してみましょう。</p>
+<h2 is-upgraded>実装</h2>
+<p><code>conf/routes</code></p>
+<pre><code>GET     /tweet/$id&lt;[0-9]+&gt;/edit     controllers.tweet.TweetController.edit(id: Long)
+POST    /tweet/$id&lt;[0-9]+&gt;/update   controllers.tweet.TweetController.update(id: Long)
+</code></pre>
+<p><code>app/controllers/tweet/TweetController.scala</code></p>
+<pre><code>  /**
+    * 編集画面を開く
+    */
+  def edit(id: Long) = Action { implicit request: Request[AnyContent] =&gt;
+    tweets.find(_.id.exists(_ == id)) match {
+      case Some(tweet) =&gt;
+        Ok(views.html.tweet.edit(
+          // データを識別するためのidを渡す
+          id,
+          // fillでformに値を詰める
+          form.fill(TweetFormData(tweet.content))
+        ))
+      case None        =&gt;
+        NotFound(views.html.error.page404())
+    }
+  }
+
+  /**
+    * 対象のツイートを更新する
+    */
+  def update(id: Long) = Action { implicit request: Request[AnyContent] =&gt;
+    form.bindFromRequest().fold(
+      (formWithErrors: Form[TweetFormData]) =&gt; {
+        BadRequest(views.html.tweet.edit(id, formWithErrors))
+      },
+      (data: TweetFormData) =&gt; {
+        tweets.find(_.id.exists(_ == id)) match {
+          case Some(tweet) =&gt;
+            // indexは0からのため-1
+            tweets.update(id.toInt - 1, tweet.copy(content = data.content))
+            Redirect(routes.TweetController.list())
+          case None        =&gt;
+            NotFound(views.html.error.page404())
+        }
+      }
+      )
+  }
+</code></pre>
+<p>今回は編集画面で利用するformにデフォルト値を埋め込んでいます。<br> その処理をしているのが<code>form.fill</code>です。<br> このメソッドにformとマッピングされている型のインスタンスを渡すことでformへ値を詰めることができます。</p>
+<p><code>app/views/tweet/list.scala.html</code></p>
+<pre><code>@import models.Tweet
+@(tweets: Seq[Tweet])
+
+@main(&#34;一覧画面&#34;) {
+  &lt;h1&gt;一覧画面です&lt;/h1&gt;
+  &lt;ul&gt;
+    @for(tweet &lt;- tweets) {
+    &lt;li&gt;
+      &lt;a href=&#34;@controllers.tweet.routes.TweetController.show(tweet.id.getOrElse(0))&#34;&gt;@tweet.content&lt;/a&gt;
+    &lt;/li&gt;
+      @* 編集ページへのリンク追加 *@
+    &lt;li&gt;
+      &lt;a href=&#34;@controllers.tweet.routes.TweetController.edit(tweet.id.getOrElse(0))&#34;&gt;
+        &lt;button type=&#34;button&#34;&gt;編集&lt;/button&gt;
+      &lt;/a&gt;
+    &lt;/li&gt;
+    }
+  &lt;/ul&gt;
+}
+</code></pre>
+<p><code>app/views/tweet/edit.scala.html</code></p>
+<pre><code>@import controllers.tweet.TweetFormData
+@* idを引数に追加 *@
+@(id: Long, form: Form[TweetFormData])(implicit messagesProvider: MessagesProvider, requestHeader: RequestHeader)
+
+@main(&#34;編集画面&#34;) {
+  &lt;h1&gt;編集画面です&lt;/h1&gt;
+  @helper.form(action = controllers.tweet.routes.TweetController.update(id)) {
+    @helper.CSRF.formField
+    @helper.textarea(form(&#34;content&#34;),
+      &#39;rows -&gt; 7, &#39;cols -&gt; 40,
+      &#39;_label -&gt; &#34;ツイート&#34; ,&#39;_showConstraints -&gt; false
+    )
+
+    &lt;input type=&#34;submit&#34; value=&#34;更新&#34;&gt;
+  }
+}
+</code></pre>
+<p>編集画面についてはこれで完了です。<br> 一部変更はありましたが、ほとんど完了画面と同じですね。</p>
+<p>余談ではありますが、例えば今回idなどをurlではなくhiddenで埋め込みたい場合には以下のようになります。</p>
+<pre><code>&lt;!-- id: Longの引数を受け取る形式のパターン --&gt;
+&lt;input type=&#34;hidden&#34; value=&#34;@id&#34; name=&#34;id&#34;&gt;
+&lt;!-- formにidも持たせるぱた－ん --&gt;
+&lt;input type=&#34;hidden&#34; value=&#34;@form.data(&#34;id&#34;)&#34; name=&#34;id&#34;&gt;
+</code></pre>
+<p>input hiddenは<a href="https://stackoverflow.com/questions/16911393/how-to-hide-a-text-field-in-play-framework" target="_blank">こちら</a>に記載されているような方法でも実現できるようですが、直感的にわかりづらいので通常のhtmlフォームを利用するのが一般的なようです。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="削除機能の作成" duration="0">
+        <p>CRUDの最後に、Delete機能を作成していきます。<br> 削除機能はシンプルなのでサクッと進めていきましょう。</p>
+<h2 is-upgraded>実装</h2>
+<p><code>conf/routes</code></p>
+<pre><code>POST    /tweet/delete               controllers.tweet.TweetController.delete
+</code></pre>
+<p>たまにGETにしてurlにidを入れるような削除を見かけますが、クローラーにアクセスされるとデータが消えるという障害に繋がるのでbodyでidを渡すようにしています。</p>
+<p><code>app/controllers/tweet/TweetController.scala</code></p>
+<pre><code>/**
+ * 対象のデータを削除する
+ */
+def delete() = Action { implicit request: Request[AnyContent] =&gt;
+  // requestから直接値を取得するサンプル
+  val idOpt = request.body.asFormUrlEncoded.get(&#34;id&#34;).headOption
+  // idがあり、値もあるときに削除
+  tweets.find(_.id.map(_.toString) == idOpt) match {
+    case Some(tweet) =&gt;
+      tweets -= tweet
+      // 削除が完了したら一覧ページへリダイレクト
+      Redirect(routes.TweetController.list())
+    case None        =&gt;
+      NotFound(views.html.error.page404())
+  }
+}
+</code></pre>
+<p>今までのやり方と同じだと少し退屈なので、requestから直接値を取る書き方にしてみました。<br> idのtweetsからのfindの仕方が汚いですが、パッといいやり方が浮かびませんでした...</p>
+<p><code>app/views/tweet/list.scala.html</code></p>
+<pre><code>@import models.Tweet
+@(tweets: Seq[Tweet])(implicit messagesProvider: MessagesProvider, requestHeader: RequestHeader)
+
+@main(&#34;一覧画面&#34;) {
+  &lt;h1&gt;一覧画面です&lt;/h1&gt;
+  &lt;ul&gt;
+    @for(tweet &lt;- tweets) {
+      @* 削除用にフォームを追加 *@
+      @helper.form(action = controllers.tweet.routes.TweetController.delete()) {
+      @helper.CSRF.formField
+      &lt;input type=&#34;hidden&#34; value=&#34;@tweet.id&#34; name=&#34;id&#34;&gt;
+      &lt;li&gt;
+        &lt;a href=&#34;@controllers.tweet.routes.TweetController.show(tweet.id.getOrElse(0))&#34;&gt;@tweet.content&lt;/a&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;a href=&#34;@controllers.tweet.routes.TweetController.edit(tweet.id.getOrElse(0))&#34;&gt;
+          &lt;button type=&#34;button&#34;&gt;編集&lt;/button&gt;
+        &lt;/a&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+          &lt;input type=&#34;submit&#34; value=&#34;削除&#34;&gt;
+      &lt;/li&gt;
+      }
+    }
+  &lt;/ul&gt;
+}
+</code></pre>
+<p>idをbodyに入れたいのでformで囲ってpostしています。<br> 今回の機能は画面がないので、各自ローカルで動作をみてみてください。<br><a href="http://localhost:9000/tweet/list" target="_blank">http://localhost:9000/tweet/list</a></p>
+<p>削除が行えていればOKです。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Twirlの修正/デザイン適用" duration="0">
+        <p>実際にシステムを作る際にはcssやjsを利用して構築していきますよね。<br> ここではふんわりにはなりますが、cssやjsのtwirlでの利用をしてみたいと思います。</p>
+<h2 is-upgraded>cssやjsを全体に適用する</h2>
+<p>css, jsは全体に適用するケースとページごとに適用するケースがあると思います。<br> Twirlの構成を見るのも含めて、まずは全体に適用するところからやっていきましょう。</p>
+<p>さっそく全体のレイアウトを構成しているファイルからみていきます。</p>
+<p><code>app/views/main.scala.html</code></p>
+<pre><code>@(title: String)(content: Html)
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&#34;en&#34;&gt;
+    &lt;head&gt;
+        &lt;title&gt;@title&lt;/title&gt;
+        @* resetのcssを適用 *@
+        &lt;link href=&#34;https://unpkg.com/sanitize.css&#34; rel=&#34;stylesheet&#34;/&gt;
+        &lt;link rel=&#34;stylesheet&#34; media=&#34;screen&#34; href=&#34;@routes.Assets.versioned(&#34;stylesheets/main.css&#34;)&#34;&gt;
+        &lt;link rel=&#34;shortcut icon&#34; type=&#34;image/png&#34; href=&#34;@routes.Assets.versioned(&#34;images/favicon.png&#34;)&#34;&gt;
+
+    &lt;/head&gt;
+    &lt;body&gt;
+        @content
+
+      &lt;script src=&#34;@routes.Assets.versioned(&#34;javascripts/main.js&#34;)&#34; type=&#34;text/javascript&#34;&gt;&lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>デフォルトのPlayFrameworkでは<code>main.scala.html</code>が全体のlayoutとして利用されています。<br> これが今までstore, listなどのページで書かれていた以下の部分になるわけです。</p>
+<pre><code>@main(&#34;一覧画面&#34;) {
+}
+</code></pre>
+<p>よくみると<code>&lt;body&gt;</code>の下に<code>@content</code>という記載があります。<br> この変数は<code>main.scala.html</code>の上部で宣言されている引数になります。</p>
+<pre><code>@* ここ *@
+@(title: String)(content: Html)
+</code></pre>
+<p><code>&#34;一</code>覧画面&#34;が<code>title</code>、各Twirlで記述されているHTMLがcontentに格納されることで全体のページが作られるという仕組みです。<br><code>{}</code>の部分が引数というのが最初はわかりづらいですがscalaでは<code>{}</code>で引数を渡せ ます。<br> 普段使っているmapメソッドも同じですよね。<br><code>Seq(1,2,3).map { v =&gt; print(v) }</code> みたいに書くときと同じです。</p>
+<p>ちなみにこのファイルが<code>content.scala.html</code>という名前だと、以下のようになります。</p>
+<pre><code>@content(&#34;一覧画面&#34;) {
+}
+</code></pre>
+<p>このmainファイルは普通のhtmlとほぼ同じなので、どうすればファイルが読み込めるかはわかりやすいですね。<br> 例えばjavascriptは以下のように読み込まれています。</p>
+<pre><code>&lt;script src=&#34;@routes.Assets.versioned(&#34;javascripts/main.js&#34;)&#34; type=&#34;text/javascript&#34;&gt;&lt;/script&gt;
+</code></pre>
+<p>ここで<code>src</code>属性に<code>routes.Assets.versioned()</code>という記述がありますが、これは他のアクションと同様にroutesにしっかりと記述されています。</p>
+<pre><code>GET     /assets/*file               controllers.Assets.versioned(path=&#34;/public&#34;, file: Asset)
+</code></pre>
+<p>routesにあるようにデフォルトでは<code>public</code>フォルダと関連づけられており<code>routes.Assets.versioned(&#34;javascripts/main.js&#34;)</code>は<code>public/javascripts/main.js</code>を対象に読み込むということになります。<br> またversionedはjs-hogehogeのようなdigestが設定されたファイルも処理できるような作りになっています。</p>
+<p>cssについても同様です。<br> ちなみに今回はreset.cssの中の一つである<code>sanitize.css</code>を外部から読み込んでいます。</p>
+<pre><code>&lt;link href=&#34;https://unpkg.com/sanitize.css&#34; rel=&#34;stylesheet&#34;/&gt;
+</code></pre>
+<p>設定を追加したので、これが読み込まれていることを確認してみましょう。<br><a href="http://localhost:9000/tweet/list" target="_blank">http://localhost:9000/tweet/list</a><br> 以下のように読み込まれていれがOKです。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/6eb6a489fa57e612.png"></p>
+<p>このようにサイト全体で適用したいものはlayoutのテンプレートになっているファイルを変更することで設定可能です。</p>
+<h2 is-upgraded>各ページごとにjs, cssを読み込めるように設定する。</h2>
+<p>次は各ページごとのcss, jsを読み込めるようにしてみましょう。<br> 実は以下のよくある使い方ページに実装の仕方が書いてあります。<br><a href="https://www.playframework.com/documentation/2.8.x/ScalaTemplateUseCases#moreScripts-and-moreStyles-equivalents" target="_blank">よくある使い方</a></p>
+<p>まずはscript, cssを受け取れるように<code>main.scala.html</code>を修正します。</p>
+<p><code>app/views/main.scala.html</code></p>
+<pre><code>@* js, cssを受け取れるように引数を追加。渡さなくてもいいようにデフォルト値も設定 *@
+@(
+  title:   String,
+  scripts: Html = HTML(&#34;&#34;),
+  csses:   Html = HTML(&#34;&#34;),
+)(content: Html)
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&#34;en&#34;&gt;
+    &lt;head&gt;
+        &lt;title&gt;@title&lt;/title&gt;
+        @* resetのcssを適用 *@
+        &lt;link href=&#34;https://unpkg.com/sanitize.css&#34; rel=&#34;stylesheet&#34;/&gt;
+        &lt;link rel=&#34;stylesheet&#34; media=&#34;screen&#34; href=&#34;@routes.Assets.versioned(&#34;stylesheets/main.css&#34;)&#34;&gt;
+        &lt;link rel=&#34;shortcut icon&#34; type=&#34;image/png&#34; href=&#34;@routes.Assets.versioned(&#34;images/favicon.png&#34;)&#34;&gt;
+        @* 引数の展開 *@
+        @csses
+    &lt;/head&gt;
+    &lt;body&gt;
+        @content
+
+      &lt;script src=&#34;@routes.Assets.versioned(&#34;javascripts/main.js&#34;)&#34; type=&#34;text/javascript&#34;&gt;&lt;/script&gt;
+      @* 引数の展開 *@
+      @scripts
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>引数を追加して、適当な場所に展開されるようにしています。</p>
+<p>あとはこれを利用してページごとにcssを作成するだけです。<br> 今回はざっくりstoreとlistページのcssを作成してみましょう。<br> jsについては特に使う必要がないので、今回は省略します。</p>
+<h3 is-upgraded>listページ</h3>
+<p>まずは一覧ページの調整をしてみます。<br> レイアウト自体はおまけなのと、css, htmlはPlayの本題からずれるので細かいことは気にせず実装していきます。</p>
+<p><code>app/views/tweet/list.scala.html</code></p>
+<pre><code>@import models.Tweet
+@(tweets: Seq[Tweet])(implicit messagesProvider: MessagesProvider, requestHeader: RequestHeader)
+
+@* 本ページに必要なcssを読み込み *@
+@css = {
+  &lt;link rel=&#34;stylesheet&#34; media=&#34;screen&#34; href=&#34;@routes.Assets.versioned(&#34;stylesheets/list.css&#34;)&#34;&gt;
+}
+
+@* 本ページに必要なjsを読み込み *@
+@script = {
+  &lt;script src=&#34;@routes.Assets.versioned(&#34;javascripts/list.js&#34;)&#34; type=&#34;text/javascript&#34;&gt;&lt;/script&gt;
+}
+
+@* 読み込んだcss,jsをmainへ渡して適切な場所でロード *@
+@main(
+  title  = &#34;一覧画面&#34;,
+  script = script,
+  css    = css,
+) {
+  @* 全部liで不適切だったので、それらしく修正 *@
+  &lt;h1&gt;一覧画面です&lt;/h1&gt;
+    @for(tweet &lt;- tweets) {
+      @* cardクリック時の遷移先を保持するためにdata-href属性を作成して設定  *@
+      &lt;div class=&#34;card&#34; data-href=&#34;@controllers.tweet.routes.TweetController.show(tweet.id.getOrElse(0))&#34;&gt;
+        &lt;div class=&#34;card_content&#34;&gt;
+          @tweet.content
+        &lt;/div&gt;
+        &lt;div class=&#34;card_footer&#34;&gt;
+          &lt;div class=&#34;card_footer_item&#34;&gt;
+            &lt;a href=&#34;@controllers.tweet.routes.TweetController.edit(tweet.id.getOrElse(0))&#34;&gt;
+              &lt;i class=&#34;far fa-edit&#34;&gt;&lt;/i&gt;
+            &lt;/a&gt;
+          &lt;/div&gt;
+          &lt;div class=&#34;card_footer_item&#34;&gt;
+            @helper.form(action = controllers.tweet.routes.TweetController.delete()) {
+              @helper.CSRF.formField
+              &lt;input type=&#34;hidden&#34; value=&#34;@tweet.id&#34; name=&#34;id&#34;&gt;
+              &lt;i class=&#34;far fa-trash-alt delete&#34;&gt;&lt;/i&gt;
+            }
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    }
+}
+</code></pre>
+<p>本題はこのページにだけ必要なcss, jsを読み込んでいる部分になります。<br> 一度htmlとして変数に格納して、名前付き引数でそれぞれ渡しています。<br> 名前付き引数にする必要はないのですが、css,jsどちらが先か気にしなくて良くてわかりやすいので名前付きで渡しました。</p>
+<p>またhtmlが全てliのまま突き進んでしまっていて流石に酷かったので、少しそれらしく調整をしています。</p>
+<p>次はここで読み込んでいるcssを作成します。</p>
+<p><code>public/stylesheets/list.css</code></p>
+<pre><code>.card {
+  border-bottom: 1px solid rgb(56, 68, 77);
+  width:         100%;
+  padding:       5px;
+  cursor:        pointer;
+}
+
+.card .card_content {
+  padding: 5px;
+}
+
+.card_footer {
+  text-align: right;
+}
+
+.card_footer .card_footer_item {
+  display:     inline-block;
+  margin-left: 5px;
+}
+
+.card_footer .card_footer_item a:link,
+.card_footer .card_footer_item i {
+  color:     white;
+  font-size: 0.9em;
+  cursor:    pointer;
+}
+</code></pre>
+<p>次にjsです。</p>
+<p><code>public/javascripts/list.js</code></p>
+<pre><code>// DOM読み込みが完了してから処理
+document.addEventListener(&#34;DOMContentLoaded&#34;,function(){
+  // HTMLCollectionを配列に変換しつつ削除アイコンを取得
+  Array.from(
+    document.getElementsByClassName(&#34;delete&#34;)
+    // それぞれのアイコンに削除フォーム実行のonclickイベントを設定
+  ).forEach(action =&gt; {
+    // eventを取得して、クリックされた要素(target)の親要素であるformをsubmitする
+    action.addEventListener(&#34;click&#34;, (e) =&gt; {
+      e.currentTarget.parentNode.submit();
+      // 親要素にある詳細ページへのリンクを止める
+      e.stopPropagation();
+    });
+  });
+
+  // Cardのクリックで詳細ページへ飛ばす
+  Array.from(
+    document.getElementsByClassName(&#34;card&#34;)
+  ).forEach(card =&gt; {
+    card.addEventListener(&#34;click&#34;, (e) =&gt; {
+      location.href = e.currentTarget.getAttribute(&#34;data-href&#34;);
+    })
+  })
+});
+</code></pre>
+<p>今回削除用formのsubmitボタンを削除して、バケツアイコンを利用するようにしているので、jsでsubmit処理を送るように実装しました。<br> またカードクリックで詳細ページに飛ぶようにも変更しています。<br> これで一覧ページに必要なファイルはそろった状態です。</p>
+<p>ただデザイン調整にあたって全体のトーンを直したいので、mainへも手を入れます。</p>
+<p><code>app/views/main.scala.html</code></p>
+<pre><code>@(
+  title:  String,
+  script: Html = Html(&#34;&#34;),
+  css:    Html = Html(&#34;&#34;),
+)(content: Html)
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&#34;en&#34;&gt;
+    &lt;head&gt;
+        &lt;title&gt;@title&lt;/title&gt;
+        &lt;link href=&#34;https://unpkg.com/sanitize.css&#34; rel=&#34;stylesheet&#34;/&gt;
+        @* NotoSansとfont-awesomeを追加 *@
+        &lt;link rel=&#34;stylesheet&#34; href=&#34;https://fonts.googleapis.com/earlyaccess/notosansjapanese.css&#34;&gt;
+        &lt;link href=&#34;https://use.fontawesome.com/releases/v5.6.1/css/all.css&#34; rel=&#34;stylesheet&#34;&gt;
+
+        &lt;link rel=&#34;stylesheet&#34; media=&#34;screen&#34; href=&#34;@routes.Assets.versioned(&#34;stylesheets/main.css&#34;)&#34;&gt;
+        &lt;link rel=&#34;shortcut icon&#34; type=&#34;image/png&#34; href=&#34;@routes.Assets.versioned(&#34;images/favicon.png&#34;)&#34;&gt;
+        @* 引数の展開 *@
+        @css
+    &lt;/head&gt;
+    &lt;body&gt;
+        @content
+
+      &lt;script src=&#34;@routes.Assets.versioned(&#34;javascripts/main.js&#34;)&#34; type=&#34;text/javascript&#34;&gt;&lt;/script&gt;
+      @* 引数の展開 *@
+      @script
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>mainのhtmlでは、コメントにあるようにWebフォントとFontAwesomeを導入しています。<br> それに伴ってcssも修正があります。</p>
+<p><code>public/stylesheets/main.css</code></p>
+<pre><code>body {
+  background-color: rgb(21, 32, 43);
+  color:            white;
+  font-family:      &#34;Noto Sans Japanese&#34;, sans-serif;
+}
+
+h1 {
+  margin:        0;
+  padding:       20px 10px;
+  border-bottom: 1px solid rgb(56, 68, 77);
+}
+</code></pre>
+<p>全体の色と文字を設定しました。<br> h1もそのままだと使いづらかったので少し手を入れています。</p>
+<p>ここまで設定ができたら、ページを確認してみましょう。<br><a href="http://localhost:9000/tweet/list" target="_blank">http://localhost:9000/tweet/list</a></p>
+<p>以下のようになっていればOKです。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/d0ec6797b4e59958.png"></p>
+<p>他のページも確認して、list.css, list.jsが読み込まれていないことを確認してみてくださいね。</p>
+<p>簡単にはなりますがTwirlへのcss, javascriptの適用の仕方は以上になります。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="おまけ" duration="0">
+        <h2 is-upgraded>CustomErrorHandlerの作成</h2>
+<p>システム開発ではよくエラーハンドラーを作成したくなることがあるので、作成の仕方を記載します。<br> 公式サイトに記載されている内容とほとんど同じではありますが、もう少し知りたい方は<a href="https://www.playframework.com/documentation/2.8.x/ScalaErrorHandling" target="_blank">こちら</a>を確認ください。</p>
+<h3 is-upgraded>CustomErrorHandlerクラスの作成</h3>
+<p>さっそく今回利用する<code>CustomErrorHandler</code>クラスを作成していきます。<br> 今回のサンプルではPlayがデフォルトで表示する404ページを、以前のセクションで作成した404ページに差し替えてみます。</p>
+<pre><code>package http
+
+import javax.inject._
+import play.api.http.DefaultHttpErrorHandler
+import play.api._
+import play.api.mvc._
+import play.api.mvc.Results._
+import play.api.routing.Router
+import scala.concurrent._
+
+@Singleton
+class CustomErrorHandler @Inject() (
+  env:          Environment,
+  config:       Configuration,
+  sourceMapper: OptionalSourceMapper,
+  router:       Provider[Router]
+) extends DefaultHttpErrorHandler(env, config, sourceMapper, router) {
+
+  override def onNotFound(request: RequestHeader, message: String): Future[Result] = {
+    Future.successful(
+      NotFound(views.html.error.page404())
+    )
+  }
+}
+</code></pre>
+<p>非常にシンプルですね。<br> 今回は404ページを差し替えたいので<code>onNotFound</code>を<code>override</code>しています。</p>
+<p>ちなみにですが<code>DefaultHttpErrorHandler</code>の実装はこのようになっています。</p>
+<pre><code>protected def onNotFound(request: RequestHeader, message: String): Future[Result] = {
+    Future.successful {
+      if (config.showDevErrors) {
+        NotFound(views.html.defaultpages.devNotFound(request.method, request.uri, router)(request))
+      } else {
+        NotFound(views.html.defaultpages.notFound(request.method, request.uri)(request))
+      }
+    }
+  }
+</code></pre>
+<p>こちらは環境設定により、エラー画面を出し分けているようですね。<br> 開発を行う際にこちらの方が都合が良いようでしたら、この実装を参考にしてください。</p>
+<p>他にも<code>onClientError</code>, <code>onServerError</code>, <code>onForbidden</code>, <code>onBadRequest</code>などが存在しますが、同じように<code>override</code>が可能です。<br> 詳しくは<code>play.api.http</code>パッケージの<code>HttpErrorHandler.scala</code>あたりをみてみましょう。</p>
+<p>Playでは良い感じにそれぞれのメソッドを呼び出してくれるので、対応するメソッドを上書きしてあげれば良いと言う作りです。</p>
+<h3 is-upgraded>利用するエラーハンドラをPlayに設定</h3>
+<p>クラスが作成できたらPlayにこのクラスを利用することを伝えてあげましょう。<br> Playではエラーハンドラを指定する方法が2つあります。</p>
+<ol type="1">
+<li>プロジェクトrootにErrorHandler.scalaを配置する</li>
+<li>application.confに設定する</li>
+</ol>
+<p>今回は2の方法で対応してみたいと思います。</p>
+<p><code>conf/application.conf</code></p>
+<pre><code>play.http.errorHandler = &#34;http.CustomErrorHandler&#34;
+</code></pre>
+<p>これで設定は完了です。<br> それでは動作をみてみましょう。<br><a href="http://localhost:9000/hogehoge/fugafuga" target="_blank">http://localhost:9000/hogehoge/fugafuga</a></p>
+<p>アクセすると以下の画面になっていれば実装完了です。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/914c74148ee7b21e.png"></p>
+<h2 is-upgraded>Option[String]のキャスト事故</h2>
+<p>資料を作成する中でハマったOptionの不思議な動きを紹介します。<br> この動きは削除機能を作るときにOption同士を比較しようとして、ハマってしまいました。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/fdb9459bc477c587.png"></p>
+<p>まず同じ型のOption同士を比較してみました。<br> これはどうやら動くということが確認できている状態です。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/3cdaeadd02730a6.png"></p>
+<p>asInstnaceOfで変換をかけてみた状態です。<br> 比較が一致しなくなってしまったので、REPL上では同じ値は参照も同一になってしまってたまたま一致しているのでは？  と思い、valとvarで宣言をしたものを比較してみています。<br> しかしこの場合には答えが一致してしまいました。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/2be82a21bb7823a3.png"></p>
+<p>ならば回りくどいがSetで排除してやろうと思い、Setに入れたところSetに1が二つ格納できてしまいました。<br> これは本格的によくわからない、という状態です。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/3fa36777ce1c0003.png"></p>
+<p>そしてこれがSeqにして値を取り出してみたものです。<br> データを取得するときに型の不一致でエラーになりました。<br> どうやら見た目上はLongっぽく振る舞われているのですが、実体はStringのまま変更されていないようでした。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/587996c56e201506.png"></p>
+<p>ただ、本来はstringをasInstanceOfでLongに変換することはできないようです。<br> 数字以外も入るので、当然といえば当然ですね。<br> これがOptionでラップされることで、処理自体は通るようになってしまうという挙動みたいです。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/dc31ea558394879d.png"><img style="width: 450.00px" src="img/ec67cb304aa40530.png"></p>
+<p>Optionに限らずモナドはできてしまうのかもしれませんね。</p>
+<p>どうやらasInstanceOfは実際に値を変換するというものではなくて、システム上指定した型として扱うということを宣言するものに近いみたいです。<br> それがモナドのように型を被せてしまうと内側まで検証できずに、そのタイミングでは通ってしまうようです。</p>
+<p>事実、データ取得時には型の不一致でエラーになることから値の変換まではできていないですからね。<br> あまりこのようなことはしないと思いますが、皆さんもお気をつけください。</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>
