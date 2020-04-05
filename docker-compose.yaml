@@ -1,0 +1,11 @@
+version: '3'
+services:
+  angular:
+    build: ./docker/angular
+    container_name: angular
+    ports:
+      - "5555:5555"
+    volumes:
+      - ./src:/source
+    # docker内にbashが存在しない様子
+    tty: true
