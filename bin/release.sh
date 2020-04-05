@@ -10,10 +10,10 @@ build_release() {
   fi
 
   yarn install
-  yarn run build
+  yarn run build  --prod
 
   cd ../..
-  cp -pr $angularDir/dist/github-pages/* .
+  \cp -pfr $angularDir/dist/github-pages/* .
 }
 
 build_release
