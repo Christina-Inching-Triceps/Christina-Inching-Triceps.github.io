@@ -28,34 +28,37 @@
                   feedback-link="https://github.com/Christina-Inching-Triceps/scala-play_handson/issues">
     
       <google-codelab-step label="基本情報" duration="0">
-        <h2 is-upgraded>sbtとは</h2>
-<p>主にScalaで利用されているビルドツールです。<br> 設定ファイルの記述はScalaのDSLを用いて行います。</p>
-<p>ライブラリの依存関係の解決や、デプロイのためのパッケージング、インクリメンタルなテストやコンパイルの実行などができます。<br> この後利用しますが、他にもシードからのプロジェクト生成などを行うことなども可能です。</p>
-<p>scalacコマンドなどを利用してscalaプログラムの実行を行うこともできますが、一般的にはsbtを利用してその上でScalaを利用することが多いと思います。</p>
+        <p>Lesson1ではPlayを利用して、簡単なCRUDを作成していきます。<br> 最初はPlayに集中するためにDB接続やその他周辺技術には触れません。<br> まずはPlay Frameworkをシンプルな状態のまま利用して、Play Frameworkに慣れていきましょう。</p>
+<p>またScala-Playで開発を行うにあたり必要となる基本的な知識・言葉については、非常に簡単にではありますが補足させていただきます。<br> 既にご存知の内容であれば、基本情報のページはスキップしていただいて問題ございません。</p>
+<h2 is-upgraded>SBTとは</h2>
+<p>SBTはScalaの考案者が創設したLightbend社が作成しているビルドツールです。<br> ビルドツールというのは自分が書いたプログラムを実際にパソコン上で動作させるために必要な手順を支援してくれるツールになります。</p>
+<p>sbtを利用するとライブラリの依存関係の解決や、デプロイのためのパッケージング、インクリメンタルなテストやコンパイルの実行を簡単に行うことができるようになります。<br> scalacコマンドなどを利用してscalaプログラムの実行を行うこともできますが、一般的にはsbtを利用してその上でScalaを利用することが多いと思います。</p>
+<p>この後利用しますが、他にもシードからのプロジェクト生成などを行うことなども可能です。</p>
+<p>Javaで利用されているAnt, Mavenを利用することも可能ですが、scalaではsbtが利用されることが一般的なのでこちらをお勧めします。</p>
 <p>参照: <a href="https://ja.wikipedia.org/wiki/Sbt" target="_blank">Wikipedia</a></p>
 <h2 is-upgraded>Play Frameworkとは</h2>
-<p>元々はJava向けのWebフレームワークです。<br> 2010年11月にリリースされたPlay 1.1からはScalaをサポートしており、現在広く利用されているフレームワークの一つです。</p>
-<p>MVCアーキテクチャに親和性が高く、Web Applicationに必要な一通りの機能が網羅されています。<br> ScalaでのWeb開発では利用率が高く、参考情報も豊富なため今回のハンズオンに採用しています。<br> ちなみにPlay2.3のころから後述のAkkaを統合しています。</p>
+<p>元々はJava向けに開発されたWebフレームワークです。<br> 2010年11月にリリースされたPlay 1.1からはScalaをサポートしており、現在広く利用されています。</p>
+<p>MVCアーキテクチャに親和性が高く、Webアプリケーション開発に必要な一通りの機能が網羅されています。<br> ScalaでのWeb開発では採用率が高く参考情報も豊富なため、今回のハンズオンに採用しています。<br> ちなみにPlay2.3のころから後述のAkkaを統合しています。</p>
 <p>[参照]<br><a href="https://ja.wikipedia.org/wiki/Play_Framework" target="_blank">Play Framework</a><br><a href="https://www.jetbrains.com/ja-jp/lp/devecosystem-2019/scala/" target="_blank">JetBrains: どのフレームワーク / ライブラリをウェブ開発に定期的に使用していますか？</a></p>
 <h3 is-upgraded>他のScala WEB Framework</h3>
 <p>その他の主要なフレームワークについても一部ご紹介しておきます。</p>
 <ul>
 <li><a href="https://scalatra.org/" target="_blank">Scalatra</a><ul>
-<li>Gitbucket(takezoeさん作成)で利用されているフレームワークです</li>
+<li>takezoeさん作成のGitbucketで利用されているフレームワークです</li>
 <li>RubyのフレームワークであるSinatraに影響を受けています</li>
 </ul>
 </li>
 <li><a href="http://skinny-framework.org/" target="_blank">Skinny Framework</a><ul>
 <li>seratchさんの作成してるフレームワークです</li>
-<li>Ruby on Railsにインスパイアされ、作成されています</li>
+<li>Ruby on Railsにインスパイアされ作成されています</li>
 </ul>
 </li>
 <li><a href="https://en.wikipedia.org/wiki/Akka_(toolkit" target="_blank">Akka</a>)  <ul>
-<li>Play Frameworkの内部でも利用されているライブラリ</li>
-<li>公式ではオープソースツールキットおよびランタイムと記載されており、フレームワークではない</li>
-<li>Sprayの後継として位置付けられていて、Akka○○という形でいくつかのライブラリに分かれている</li>
-<li>Akka httpが一番よく聞く。Http関連のモジュール</li>
-<li>Actor modelを採用している -&gt; <a href="https://ja.wikipedia.org/wiki/%E3%82%A2%E3%82%AF%E3%82%BF%E3%83%BC%E3%83%A2%E3%83%87%E3%83%AB" target="_blank">Wikipedia</a></li>
+<li>Play Frameworkの内部でも利用されているライブラリです</li>
+<li>公式ではオープソースツールキットおよびランタイムと記載されており、フレームワークではありません</li>
+<li>Sprayの後継として位置付けられていて、Akka○○という形でいくつかのライブラリに分かれています</li>
+<li>Akka httpが一番よく聞きます。これはHttp関連のモジュールです</li>
+<li>Actor modelを採用しています -&gt; <a href="https://ja.wikipedia.org/wiki/%E3%82%A2%E3%82%AF%E3%82%BF%E3%83%BC%E3%83%A2%E3%83%87%E3%83%AB" target="_blank">Wikipedia</a></li>
 </ul>
 </li>
 </ul>
@@ -65,15 +68,15 @@
 <li>Visual Studio Code &amp; metals</li>
 <li>Vim or Emacs &amp; metals</li>
 </ul>
-<p>IDEについてはほぼほぼIntellij IDEAで統一されている印象です。<br> Community EditionでもScala Pluginを導入すれば、個人で開発する範囲であればあまり不自由なく開発が行えると思います。</p>
-<p>他の選択肢として、最近はMetalsというScala向けのLanguage Serverの開発が進んでおり、LSPを利用した連携機能を持つエディタであればかなり快適に開発を行うことも可能です。<br> 事実、私はVimとMetalsを利用して開発を行っています。</p>
-<p>個人的には、強いこだわりがない限りは<code>IntelliJ IDEA</code>の利用をオススメします。</p>
+<p>IDEについてはほぼほぼIntellij IDEAで統一されている印象です。<br> Community EditionでもScala Pluginを導入すると、個人開発の範囲であればあまり不自由なく開発が行えると思います。</p>
+<p>他の選択肢としてMetalsというScala向けのLanguage Serverを利用する方法があります。<br> 最近活発に開発がされており、LSPを利用した連携機能を持つエディタであればかなり快適に開発を行うことも可能です。<br> 事実、私はVimとMetalsを利用して開発を行っています。</p>
+<p>個人的には、強いこだわりがない限りは<code>IntelliJ IDEA</code>の利用をオススメします。<br> IntelliJ IDEAにはScalaのプログラムを「よりScalaらしい」記述にリファクタリングしてくれる機能など、便利な機能が多く用意されているためです。</p>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="環境のセットアップ" duration="0">
-        <p>この章ではIntelliJ IDEAとPlayのセットアップを行います。<br> 既に完了されている方はスキップしていただいて問題ありません。</p>
+        <p>このページではIntelliJ IDEAとPlayのセットアップを行います。<br> 既に完了されている方はスキップしていただいて問題ありません。</p>
 <h2 is-upgraded>注意事項</h2>
 <p>本ハンズオンは現在(2020年02月)時点で最新である、Play2.8を利用してハンズオンを進めていきます。</p>
 <p>また本ハンズオンは以下を前提として構築されています。</p>
@@ -84,10 +87,10 @@
 <p>前提となっている環境と差異がある方は各々読みかえていただいたり、適宜セットアップを行ってください。</p>
 <p><a href="https://www.scala-sbt.org/1.x/docs/ja/Installing-sbt-on-Windows.html" target="_blank">sbt インストール方法 Windowsの場合</a><br><a href="https://www.scala-sbt.org/1.x/docs/ja/Installing-sbt-on-Mac.html" target="_blank">sbt インストール方法 Macの場合</a><br><a href="https://www.scala-sbt.org/1.x/docs/ja/Installing-sbt-on-Linux.html" target="_blank">sbt インストール方法 Linuxの場合</a></p>
 <h2 is-upgraded>推奨環境</h2>
-<p>ハンズオンが作成されている環境がsbt1.3系を利用しているため、これを推奨します。</p>
 <ul>
 <li>1.3系のsbtが導入されている</li>
 </ul>
+<p>ハンズオンが作成されている環境がsbt1.3系を利用しているため、これを推奨します。</p>
 <h2 is-upgraded>Playの導入</h2>
 <p>早速ですがPlayの導入を行っていきます。<br> sbtのコマンドからPlayのシードプロジェクトを作成してみましょう。</p>
 <p>任意のプロジェクトディレクトリを作成して、以下のコマンドを実行してください。<br> あくまで例になりますが、以下にMacでの作業をイメージしてコマンドを記載していきます。</p>
@@ -153,8 +156,10 @@ $ sbt run
 <p class="image-container"><img style="width: 450.00px" src="img/e54fc2f8621f685e.png"></p>
 <p>これでIDEAが起動して、プロジェクトが読み込まれます。<br> またそのときに下の画像のようなポップアップが表示されたら<code>Import Changes</code>を選択しましょう。</p>
 <p class="image-container"><img style="width: 450.00px" src="img/2a16cc54121a137a.png"></p>
-<p>sbtに変更が加わったときなどに表示されます。これをしないとsbt関連の変更が適用されないのでご注意ください。</p>
+<p>このポップアップはsbtに変更が加わったときなどに表示されます。<br> ここで<code>import changes</code>を行わないとsbt関連の変更が適用されないのでご注意ください。</p>
 <p><code>Enable Auto-Import</code>をすると自動で設定を更新するようになりますが、sbtの読み込みはマシンパワーを使うことがあるので私は手動が好きです。<br> ただこれはお好みで選んでいただいて構いません。</p>
+<p>また、もし間違って閉じてしまった場合には、以下の赤枠の部分からロードし直すことができます。</p>
+<p class="image-container"><img style="width: 450.00px" src="img/b1e104467d390103.png"></p>
 <p>では、起動が完了したら試しに<code>app/controllers/HomeController.scala</code>のファイルを開いてみましょう。</p>
 <p class="image-container"><img style="width: 450.00px" src="img/4d002698f5ff64ea.png"></p>
 <p>ソースコード上で、21行目の<code>Action</code>に<code>Cmd</code>キーを押しながらカーソルを移動してみてください。<br> マウスが当たったときにカーソルが指マークに変わるとおもいます。<br> そこでクリックをしてみましょう。<br> Actionの実装に飛ぶことができれば設定は正常にされている状態になっています。</p>
@@ -194,32 +199,37 @@ $ sbt run
 ├── target
 └── test
 </code></pre>
-<p>基本的に<code>scala</code>ファイルは<code>app</code>以下に配置していきます。<br><code>views</code>もこのapp以下に配置されていますね。</p>
-<p><code>conf</code>には設定関連が配置されています。<br><code>application.conf</code>はメインの設定ファイルで、システムから利用する設定情報などを記載します。記載された設定は<code>controller</code>にDIされたconfigインスタンスから利用できます。<br><code>logback.xml</code>はログ出力フォーマットや出力条件などを設定するものでplayで採用されている<code>logback</code>というライブラリのための設定ファイルになります。<br><code>messages</code>は多言語対応や、メッセージ管理用の設定でバリデーションメッセージなど各メッセージの管理に利用できます。<br><code>routes</code>はルーティング情報を記載するファイルです。分割して管理することなども可能です。システムから利用される際には、このファイルの情報がコンパイルされたClassファイルが利用されるようになっています。</p>
+<p>基本的に<code>scala</code>ファイルは<code>app</code>以下に配置していきます。<br><code>views</code>もこのapp以下に配置されていますね。<br><code>views</code>にはtwirlというscalaとhtmlの混ざったViewテンプレートを配置します。</p>
+<p><code>conf</code>には設定関連が配置されています。</p>
+<p><code>application.conf</code>はメインの設定ファイルで、システムから利用する設定情報などを記載します。記載された設定は<code>controller</code>にDIされたconfigインスタンスから利用できます。<br> 今後一番利用することになる設定ファイルです。</p>
+<p><code>logback.xml</code>はログ出力フォーマットや出力条件などを設定するものでPlayで採用されている<code>logback</code>というライブラリのための設定ファイルになります。<br> Play独自のものではないため、本ハンズオンでは詳細には取り扱いません。気になる方はlogbackというワードで調べてみると、細かい設定方法が確認できます。</p>
+<p><code>messages</code>は多言語対応や、メッセージ管理用の設定でバリデーションメッセージなど各メッセージの管理に利用できます。<br><code>routes</code>はルーティング情報を記載するファイルです。分割して管理することなども可能です。<br> システムから利用される際には、このファイルの情報がコンパイルされたClassファイルが利用されるようになっています。</p>
 <p><code>project</code>以下にはsbt系の設定ファイルを切り出して配置します。<br> ここで定義したものを<code>build.sbt</code>で読み込んで利用したりします。<br> 例えばscalafmtなどのプラグインを<code>plugins.sbt</code>に追加して利用したりします。</p>
 <p><code>build.sbt</code>はプロジェクトのビルド設定ファイルです。<br> ビルドするための依存ライブラリを記述したり、デプロイ設定を記載したりします。<br> またsbt shellにコマンドを追加するときにも、このファイルに追加を行っていきます。</p>
-<p>概ねフォルダやファイル名が示す通りですが、このような構成になっています。<br> ただ開発するだけであれば、app以下, routesあたりが一番よく触るファイルになると思います。</p>
+<p>概ねフォルダやファイル名が示す通りですが、このような構成になっています。<br> 開発するだけであればapp以下, routesあたりが一番よく触るファイルになると思います。</p>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="一覧ページ作成" duration="0">
-        <p>それではPlayの機能を触りながら、一覧ページから作成していきましょう。<br> 前述の通り、今回はPlayに集中するためDBへのアクセスは行わずに作成します。</p>
+        <p>それではPlayの機能を触りながら一覧ページから作成していきましょう。<br> 前述の通り、今回はPlayに集中するためDBへのアクセスは行わずに機能を作成していきます。</p>
 <h2 is-upgraded>ルーティング</h2>
 <p>まずはリクエストに対する処理の設定をみていきます。<br> Playでは<code>conf/routes</code>のファイルでルーティングを管理しています。<br> 今の状態の<code>conf/routes</code>ファイルを開いてみると以下のようになっていると思います。</p>
+<p><code>conf/routes</code></p>
 <pre><code># ... 一部抜粋
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
 </code></pre>
 <p>これは<code>GET</code>Methodの<code>/</code>へのリクエストに対して<code>controllers.HomeController.index</code>を設定すると言うことになります。<br> この設定のおかげで、Playは<code>http://localhost:9000</code>、つまりルート(<code>/</code>)に対して<code>HomeController</code>の<code>index</code>アクションを実行するということを理解できるようになります。</p>
 <p>今回は一覧表示機能を作成したいので、以下のようにルーティングを設定してみましょう。</p>
+<p><code>conf/routes</code></p>
 <pre><code>GET     /tweet/list                 controllers.tweet.TweetController.list
 </code></pre>
-<p>今回は意図的に<code>tweet</code>というパッケージを間に挟んでいます。<br> その場合にどうなるのか、スッとイメージができたりできなかったりすることがあるので参考として追加しているため特別な意味はありません。</p>
+<p>今回は意図的に<code>tweet</code>というパッケージを間に挟んでいます。<br> よくあるサンプルでは独自にパッケージを追加したものがほとんどなく、今後の参考のためにこのようにしています。</p>
 <p>次は設定したルーティングに必要なコントローラーを作成してきましょう。</p>
 <h2 is-upgraded>Controllerの作成</h2>
-<p>Playでは基本的にはControllerでリクエストに対しての処理を受け取ります。<br> Controller内にあるリクエストに対するメソッドは一般的に<code>Action</code>と呼ばれます。(他のプログラミング言語、フレームワークでも同様です)</p>
-<p>ここでは<code>TweetController.scala</code>を作成して、その中で<code>list</code>アクションを作成していきます。</p>
+<p>PlayではControllerクラスでリクエストに対しての処理を受け取ります。<br> Controller内にあるリクエストに対するメソッドは一般的にアクションと呼ばれます。(他のプログラミング言語、フレームワークでも同様です)</p>
+<p>ここでは<code>TweetController.scala</code>を作成し、その中に<code>list</code>アクションを作成していきます。</p>
 <p><code>app/controller/tweet/TweetController.scala</code></p>
 <pre><code>package controllers.tweet
 
@@ -232,13 +242,13 @@ import play.api.mvc.AnyContent
 /**
   * @SingletonでPlayFrameworkの管理下でSingletonオブジェクトとして本クラスを扱う指定をする
   * @Injectでconstructorの引数をDIする
-  * BaseControllerにはprotected の controllerComponentsが存在するため、そこに代入されている。
-  * controllerComponentsがActionメソッドを持つため、Actionがコールできる
-  *   ActionはcontrollerComponents.actionBuilderと同じ
+  *   BaseControllerにはprotected の controllerComponentsが存在するため、そこに代入される。
   */
 @Singleton
 class TweetController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
 
+  // BaseControllerにActionメソッドが定義されているため、Actionがコールできる
+  //   このActionにcontrollerComponentsが利用されているためInject部分でDIされている
   def list() =  Action { implicit request: Request[AnyContent] =&gt;
     // Ok()はステータスコードが200な、Resultをreturnします。
     // つまり正常系としてviews.html.tweet.listのコンテンツを返すということになります。
@@ -246,7 +256,21 @@ class TweetController @Inject()(val controllerComponents: ControllerComponents) 
   }
 }
 </code></pre>
-<p>これで<code>http://localhost:9000/list</code>のリクエストに対してのアクションを作成できました。<br> ただまだこれではエラーが出ていると思います。<br> それはこのリクエストに対するレスポンスに指定している<code>views.html.tweet.list</code>のファイルが存在しないからです。</p>
+<p>プログラム内にコメントで各実装の説明を記載していますが、少し難しい部分も多いためよくわからない部分は慣れるまでは一旦深追いしなくても大丈夫です。<br> 今回覚えておきたいのは以下の部分です。</p>
+<pre><code>def list() =  Action { implicit request: Request[AnyContent] =&gt;
+  Ok(views.html.tweet.list())
+}
+</code></pre>
+<p>まず<code>Action { ...</code> の部分は言語として用意された構文ではありません。<br> 正確ではありませんが、イメージとしては<code>Action(request: Request =&gt; { block })</code> というメソッドの呼び出しになります。</p>
+<p>この<code>{ block }</code>の部分が<code>implicit request: Request[AnyContent] =&gt;</code>以後に記載されているプログラム全体です。<br> 今回の場合には以下の部分がブロック内の実装になっていますね。</p>
+<pre><code>Ok(views.html.tweet.list())
+</code></pre>
+<p>この部分はHTTPステータスコードの<code>200 OK</code>をreturnしつつ、レスポンスとして<code>views.html.tweet.list</code>の画面を返すという意味になります。</p>
+<p>これで<code>http://localhost:9000/list</code>のリクエストに対してのアクションを作成できました。<br> 一度プログラムをコンパイルしてみましょう。<br> コンパイルはターミナルから、以下のコマンドを実行することで行えます。</p>
+<pre><code>$ sbt compile
+# sbt ~compileとするとファイル変更を検知するたびに自動ビルドされます。お好みで使い分けてください。
+</code></pre>
+<p>まだエラーになってしまっていますね。<br> それはこのリクエストに対するレスポンスに指定している<code>views.html.tweet.list</code>のファイルが存在しないからです。</p>
 <p>次は一覧画面のためのhtmlを作成していきましょう。</p>
 <h2 is-upgraded>画面の作成</h2>
 <p>Playではデフォルトでは<code>Twirl</code>というテンプレートエンジンを利用して画面を作成します。<br> Twirlのファイルは<code>views/</code>直下に配置されており、拡張子が<code>.scala.html</code>となっています。<br> 今回は<code>views/tweet/list.scala.html</code>を作成していきます。</p>
@@ -1251,6 +1275,7 @@ class CustomErrorHandler @Inject() (
   <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
   <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
   <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
 
 </body>
 </html>
