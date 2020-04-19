@@ -29,9 +29,9 @@
     
       <google-codelab-step label="基本情報" duration="0">
         <p>Lesson1ではPlayを利用して、簡単なCRUDを作成していきます。<br> 最初はPlayに集中するためにDB接続やその他周辺技術には触れません。<br> まずはPlay Frameworkをシンプルな状態のまま利用して、Play Frameworkに慣れていきましょう。</p>
-<p>またScala-Playで開発を行うにあたり必要となる基本的な知識・言葉については、非常に簡単にではありますが補足させていただきます。<br> 既にご存知の内容であれば、基本情報のページはスキップしていただいて問題ございません。</p>
+<p>またScala-Playで開発を行うにあたり必要となる基本的な知識・言葉については、非常に簡単にではありますが補足していきます。<br> 既にご存知の内容であれば、基本情報のページはスキップしていただいて問題ありません。</p>
 <h2 is-upgraded>SBTとは</h2>
-<p>SBTはScalaの考案者が創設したLightbend社が作成しているビルドツールです。<br> ビルドツールというのは自分が書いたプログラムを実際にパソコン上で動作させるために必要な手順を支援してくれるツールになります。</p>
+<p>SBTはScalaの考案者が創設したLightbend社が作成しているビルドツールです。<br> ビルドツールというのは自分が書いたプログラムを実際にパソコン上で動作させるために必要な手順を支援してくれるツールです。</p>
 <p>sbtを利用するとライブラリの依存関係の解決や、デプロイのためのパッケージング、インクリメンタルなテストやコンパイルの実行を簡単に行うことができるようになります。<br> scalacコマンドなどを利用してscalaプログラムの実行を行うこともできますが、一般的にはsbtを利用してその上でScalaを利用することが多いと思います。</p>
 <p>この後利用しますが、他にもシードからのプロジェクト生成などを行うことなども可能です。</p>
 <p>Javaで利用されているAnt, Mavenを利用することも可能ですが、scalaではsbtが利用されることが一般的なのでこちらをお勧めします。</p>
@@ -69,7 +69,7 @@
 <li>Vim or Emacs &amp; metals</li>
 </ul>
 <p>IDEについてはほぼほぼIntellij IDEAで統一されている印象です。<br> Community EditionでもScala Pluginを導入すると、個人開発の範囲であればあまり不自由なく開発が行えると思います。</p>
-<p>他の選択肢としてMetalsというScala向けのLanguage Serverを利用する方法があります。<br> 最近活発に開発がされており、LSPを利用した連携機能を持つエディタであればかなり快適に開発を行うことも可能です。<br> 事実、私はVimとMetalsを利用して開発を行っています。</p>
+<p>他の選択肢としてMetalsというScala向けのLanguage Serverを利用する方法があります。<br> 最近活発に開発がされており、LSPを利用した連携機能を持つエディタであればかなり快適に開発を行うことも可能です。<br> VS Codeが有名ですね。<br> ちなみに私はVimとMetalsを利用して開発を行っています。</p>
 <p>個人的には、強いこだわりがない限りは<code>IntelliJ IDEA</code>の利用をオススメします。<br> IntelliJ IDEAにはScalaのプログラムを「よりScalaらしい」記述にリファクタリングしてくれる機能など、便利な機能が多く用意されているためです。</p>
 
 
@@ -105,7 +105,7 @@ name [play-scala-seed]: play-handson
 organization [com.example]: com.example
 </code></pre>
 <p>name部分でプロジェクト名を指定しています。<br> organizationは個人のドメインをお持ちの方は、その逆順で記載しても良いです。<br> 今回はサンプルのためデフォルトのままの <code>com.example</code>を指定しています。</p>
-<p>これでコマンドを実行したフォルダ以下に<code>name</code>で指定したプロジェクト名のフォルダが作成されます。</p>
+<p>コマンドを実行したフォルダ以下に<code>name</code>で指定したプロジェクト名のフォルダが作成されます。</p>
 <pre><code>└── play-handson
     ├── app
     ├── build.sbt
@@ -197,10 +197,10 @@ $ sbt run
 ├── target
 └── test
 </code></pre>
-<p>基本的に<code>scala</code>ファイルは<code>app</code>以下に配置していきます。<br><code>views</code>もこのapp以下に配置されていますね。<br><code>views</code>にはtwirlというscalaとhtmlの混ざったViewテンプレートを配置します。</p>
+<p>基本的に<code>scala</code>ファイルは<code>app</code>以下に配置していきます。<br><code>views</code>もこのapp以下に配置されていますね。<br><code>views</code>は名前の通り画面側の実装を配置するのですが、PlayFrameworkではtwirlというscalaとhtmlの混ざったViewテンプレートを利用します。</p>
 <p><code>conf</code>には設定関連が配置されています。</p>
-<p><code>application.conf</code>はメインの設定ファイルで、システムから利用する設定情報などを記載します。記載された設定は<code>controller</code>にDIされたconfigインスタンスから利用できます。<br> 今後一番利用することになる設定ファイルです。</p>
-<p><code>logback.xml</code>はログ出力フォーマットや出力条件などを設定するものでPlayで採用されている<code>logback</code>というライブラリのための設定ファイルになります。<br> Play独自のものではないため、本ハンズオンでは詳細には取り扱いません。気になる方はlogbackというワードで調べてみると、細かい設定方法が確認できます。</p>
+<p><code>application.conf</code>はメインの設定ファイルで、システムから利用する設定情報などを記載します。<br> 記載された設定は<code>controller</code>にDIされたconfigインスタンスから利用することが多いです。<br> 今後一番利用することになる設定ファイルなので覚えておきましょう。</p>
+<p><code>logback.xml</code>はログ出力フォーマットや出力条件などを設定するもので、Playで採用されている<code>logback</code>というライブラリのための設定ファイルになります。<br> Play独自のものではないため、本ハンズオンでは詳細には取り扱いません。<br> 気になる方はlogbackというワードで調べてみると、細かい設定方法が確認できます。</p>
 <p><code>messages</code>は多言語対応や、メッセージ管理用の設定でバリデーションメッセージなど各メッセージの管理に利用できます。<br><code>routes</code>はルーティング情報を記載するファイルです。分割して管理することなども可能です。<br> システムから利用される際には、このファイルの情報がコンパイルされたClassファイルが利用されるようになっています。</p>
 <p><code>project</code>以下にはsbt系の設定ファイルを切り出して配置します。<br> ここで定義したものを<code>build.sbt</code>で読み込んで利用したりします。<br> 例えばscalafmtなどのプラグインを<code>plugins.sbt</code>に追加して利用したりします。</p>
 <p><code>build.sbt</code>はプロジェクトのビルド設定ファイルです。<br> ビルドするための依存ライブラリを記述したり、デプロイ設定を記載したりします。<br> またsbt shellにコマンドを追加するときにも、このファイルに追加を行っていきます。</p>
@@ -309,7 +309,7 @@ case class Tweet(
 <pre><code>def list() =  Action { implicit request: Request[AnyContent] =&gt;
   // 1から10までのTweetクラスのインタンスを作成しています。
   // 1 to 10だとIntになってしまうので1L to 10LでLongにしています。
-  val tweets: Seq[Tweet] = (1L to 10).map(i =&gt; Tweet(Some(i), s&#34;test tweet${i.toString}&#34;))
+  val tweets: Seq[Tweet] = (1L to 10L).map(i =&gt; Tweet(Some(i), s&#34;test tweet${i.toString}&#34;))
 
   // viewの引数としてtweetsを渡します。
   Ok(views.html.tweet.list(tweets))
@@ -797,13 +797,13 @@ constraint.maxLength=最大{0}文字まで
       <google-codelab-step label="更新ページの作成" duration="0">
         <p>更新ページの作成は今まで作ってきたものを参考に進めていけば、基本的には問題なく作成できます。<br> 早速それぞれ必要なファイルを作成してみましょう。</p>
 <h2 is-upgraded>実装</h2>
-<p>登録ページと同様に画面表示用のGETアクションとデータ更新用のPOSTアクションを作成していきます。</p>
+<p>まずは登録ページと同様に画面表示用のGETアクションとデータ更新用のPOSTアクションを作成していきます。</p>
 <p><code>conf/routes</code></p>
 <pre><code>GET     /tweet/$id&lt;[0-9]+&gt;/edit     controllers.tweet.TweetController.edit(id: Long)
 POST    /tweet/$id&lt;[0-9]+&gt;/update   controllers.tweet.TweetController.update(id: Long)
 </code></pre>
-<p>ルーティングが設定できたので、それぞれのアクションを実装します。<br> 登録画面と違い、更新画面では画面表示の段階で更新対象データを画面に表示する必要があります。</p>
-<p>そのためeditアクションが登録と比較して実装コードが多くなっています。<br> しかし、行っていることはroutesから渡ってきたidでデータを取得して渡しているだけなので複雑ではありません。</p>
+<p>ルーティングを作成したら今まで同様にそれぞれに対するアクションを実装します。</p>
+<p>更新画面では画面表示の段階で更新対象データを画面に表示する必要があるため、登録画面と比べるとGETアクションにも処理が追加されています。<br> しかし、行っていることはroutesから渡ってきたidでデータを取得して渡しているだけなので複雑ではありません。</p>
 <p><code>app/controllers/tweet/TweetController.scala</code></p>
 <pre><code>  /**
     * 編集画面を開く
