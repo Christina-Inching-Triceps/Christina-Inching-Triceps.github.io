@@ -2,7 +2,7 @@ version: '3'
 services:
   angular:
     build: ./docker/angular
-    container_name: angular
+    container_name: github-page-angular
     ports:
       - "5555:5555"
     volumes:
