@@ -5,7 +5,7 @@
     "build:pug": "pug src/app --doctype html ---pretty ",
     "watch:pug": "pug src/app --doctype html --watch --pretty ",
     "ng": "ng",
-    "start":     "yarn run watch:pug & ng serve --host=0.0.0.0 --port=5555",
+    "start": "yarn run watch:pug & ng serve --host=0.0.0.0 --port=5555",
     "build": "build:pug & ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -24,6 +24,7 @@
     "@angular/platform-browser-dynamic": "~9.1.0",
     "@angular/router": "~9.1.0",
     "pug": "2.0.4",
+    "pug-cli": "^1.0.0-alpha6",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"
