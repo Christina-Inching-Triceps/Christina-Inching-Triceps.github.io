@@ -1,0 +1,345 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Play Framewworkハンズオン 2.5章</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="play-handson-lesson2.5"
+                  title="Play Framewworkハンズオン 2.5章"
+                  environment="web"
+                  feedback-link="https://github.com/Christina-Inching-Triceps/scala-play_handson/issues">
+    
+      <google-codelab-step label="Docker環境のセットアップ" duration="0">
+        <p>今までと同様にDockerで環境を構築していきます。</p>
+<p>最初にAngular Elements用のフォルダを作成していきます。<br> 今回はuiというフォルダで作業を進めていきます。</p>
+<pre><code>$ mkdir ui
+</code></pre>
+<p>作業用のフォルダが作成できたので、引き続きDockerfileの作成とdocker-compose.yamlの編集をしていきましょう。</p>
+<p>まず最初にDockerfileです。</p>
+<p><code>docker/angular/Dockerfile</code></p>
+<pre><code>FROM node:10.16.3
+
+RUN apt-get update
+RUN apt-get install -y bash
+
+RUN npm install -g @angular/cli
+</code></pre>
+<p>nodeのdocker imageはデフォルトのシェルがdashのためbashをインストールしておきます。<br> これは今後作成するシェルスクリプトの動作を安定させるためになります。</p>
+<p>その他にはngコマンドを利用するためのangular/cliの導入を行っています。</p>
+<p>次はdocker-composeファイルの変更です。</p>
+<p><code>docker-compose.yaml</code></p>
+<pre><code>  play_angular:
+    build: ./docker/angular
+    ports:
+      - &#34;5555:5555&#34;
+    container_name: play_angular
+    volumes:
+      - ./:/source
+    working_dir: /source/ui
+    tty: true
+</code></pre>
+<p>docker-composeファイルは今回追加した一部のみを追加しています。<br> angualr-elementsを利用するための環境のため、networkの設定は行っていません。</p>
+<p>volumesの設定を <code>/source/ui/angular-elements</code> とすることも考えましたが、buildしたangylar-elementsのファイルをPlay側へ送るためにプロジェクトルートからマウントするようにしています。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Angular Elementsプロジェクトのセットアップ" duration="0">
+        <p>作業用の環境が構築できたので、本題のAngular-Elementsをセットアップしていきます。</p>
+<h2 is-upgraded>Angularプロジェクトの作成</h2>
+<p>まずはAngularプロジェクトの作成を行います。</p>
+<pre><code>$ cd {projec_root}
+$ docker-compose up -d
+# docker containerへアクセス
+$ docker-compose exec play_angular bash
+
+# angular-cliを利用してプロジェクトを新規に作成
+root@2156f87e6c03:/source# ng new angular-elements
+? Would you like to add Angular routing? Yes
+? Which stylesheet format would you like to use? SCSS   [ https://sass-lang.com/documentation/syntax#scss                ]
+... 省略 ...
+
+
+$ cd angular-elements
+</code></pre>
+<p>AngularElementsを利用する場合routerはあまり使いませんが、使うこともできるのでインストールしてみています。<br> CSSについてはお好みで選択いただいて問題ありません。</p>
+<h2 is-upgraded>Angularのプラグインを追加</h2>
+<p>プロジェクトが作成できたので、最低限必要な設定を行っていきます。<br> まずは利用するプラグインのインストールです。</p>
+<pre><code># 最終的にhtml, jsにビルドされるためdevelop用としてインストール
+$ yarn add -D pug pug-cli typescript@3.8.3
+
+# angular-elementsを利用するためにelementsをインストール
+$ yarn add @angular/cdk @angular/elements
+
+# 各々の趣味に合わせて利用するものをインストール
+$ yarn add @angular/material @ngrx/store
+</code></pre>
+<p>最低限必要なものは <code>@angular/elements</code> のみになります。<br> 他はお好みに合わせてインストールしてください。</p>
+<h2 is-upgraded>package.jsonの設定</h2>
+<p>プラグインがインストールできたら、開発やビルドを行うためにpackage.jsonを設定していきます。</p>
+<p><code>ui/angular-elements/package.json</code></p>
+<pre><code>{
+  &#34;name&#34;: &#34;angular-elements&#34;,
+  &#34;version&#34;: &#34;0.0.0&#34;,
+  &#34;scripts&#34;: {
+    &#34;ng&#34;: &#34;ng&#34;,
+    &#34;build:pug&#34;: &#34;pug src/app --doctype html ---pretty &#34;,
+    &#34;watch:pug&#34;: &#34;pug src/app --doctype html --watch --pretty &#34;,
+    &#34;start&#34;: &#34;yarn run watch:pug &amp; ng serve --host=0.0.0.0 --port=5555&#34;,
+    &#34;build&#34;: &#34;ng build&#34;,
+    &#34;build:elements&#34;: &#34;ng build --prod --output-hashing=none&#34;,
+    &#34;test&#34;: &#34;ng test&#34;,
+    &#34;lint&#34;: &#34;ng lint&#34;,
+    &#34;e2e&#34;: &#34;ng e2e&#34;
+  },
+... 省略
+</code></pre>
+<p>今回追加したのはそれぞれ以下のような設定です。</p>
+<pre><code>build:pug -&gt; pugファイルをhtmlへ変換し出力する
+watch:pug -&gt; pugファイルの変更を監視して変更されたときにhtmlへ変換する
+statt     -&gt; pugファイルを監視しながらng serveを起動する
+※ Dockerコンテナの外から開発用サーバにアクセスできるようにするため`--host=0.0.0.0`設定を追加しています。  
+
+build:elements -&gt; angular-elementsのファイルをprod設定でビルドする
+</code></pre>
+<p><code>build:elements</code>でhash値をnoneにしているのは、実際にデプロイするときにはハッシュ値の付与をPlay側で行えば良いからです。</p>
+<p>これで開発に必要な最低限の設定が完了です。</p>
+<h2 is-upgraded>tsconfig.jsonの修正</h2>
+<p>次にtsconfigの修正を行います。</p>
+<p><code>ui/angular-elements/package.json</code></p>
+<pre><code>  ... 省略
+  &#34;angularCompilerOptions&#34;: {
+    &#34;fullTemplateTypeCheck&#34;: true,
+    &#34;strictInjectionParameters&#34;: true,
+    &#34;enableIvy&#34;: false
+  }
+</code></pre>
+<p>今回コンパイルオプションに1つ設定を追加しています。</p>
+<p>Angular9からivyというレンダリングエンジンが導入されているのですが、それがあることによってmaterialあたりでビルドが落ちてしまいました。<br> そのためIvyをfalseに設定しています。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="angular-elementsのサンプル実装" duration="0">
+        <p>設定が完了したので早速angular-elementsを利用したサンプルを作成していきます。</p>
+<h2 is-upgraded>カスタムエレメントとして利用するComponentを作成</h2>
+<p>今回は<code>@Input()</code>として受け取った文字列をそのまま表示する、シンプルなComponentを作成します。</p>
+<p><code>ui/angular-elements/src/app/sample/hello-elements.ts</code></p>
+<pre><code>import { Component, Input }  from &#39;@angular/core&#39;;
+
+@Component({
+  selector:    &#39;hello-elements&#39;,
+  templateUrl: &#39;./hello-elements.html&#39;,
+  styleUrls:  [&#39;./hello-elements.scss&#39;]
+})
+export class HelloElementsComponent {
+  @Input() displayText: string = &#39;default text&#39;
+
+  constructor(){}
+}
+</code></pre>
+<p><code>ui/angular-elements/src/app/sample/hello-elements.pug</code></p>
+<pre><code>p.custom
+  | &#123;&#123; displayText }}
+</code></pre>
+<p><code>ui/angular-elements/src/app/sample/hello-elements.scss</code></p>
+<pre><code>:host{
+  .custom {
+    color: red;
+  }
+}
+</code></pre>
+<p><code>ui/angular-elements/src/app/sample/index.ts</code></p>
+<pre><code>export * from &#39;./hello-elements&#39;
+</code></pre>
+<p>特に複雑な部分もない実装ですね。</p>
+<h2 is-upgraded>作成したComponetをCustomElementsとして登録</h2>
+<p>Componentが作成できたので、CustomElementsとして利用できるように登録していきます。</p>
+<p>まずは<code>app.module.ts</code>に登録します。</p>
+<p><code>ui/angular-elements/src/app/app.module.ts</code></p>
+<pre><code>import { BrowserModule }          from &#39;@angular/platform-browser&#39;;
+import { NgModule }               from &#39;@angular/core&#39;;
+import { AppComponent }           from &#39;./app.component&#39;;
+import { HelloElementsComponent } from &#39;src/app/sample&#39;;
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    HelloElementsComponent
+  ],
+  imports: [
+    BrowserModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent],
+  entryComponents: [HelloElementsComponent]
+})
+export class AppModule { }
+</code></pre>
+<p>先ほど作成してComponentsを<code>declarations</code>と<code>entryComponents</code>に追加しています。<br> またimportsに登録されていた<code>AppRoutingModule</code>は、今のところ利用しないため削除しています。</p>
+<p>次はAngularに読み込ませたComponentsをCustomElementsとして登録していきます。</p>
+<p><code>ui/angular-elements/src/app/app.component.ts</code></p>
+<pre><code>import { Component, Injector }    from &#39;@angular/core&#39;;
+import { createCustomElement }    from &#39;@angular/elements&#39;
+import { HelloElementsComponent } from &#39;src/app/sample&#39;;
+
+@Component({
+  selector: &#39;app-root&#39;,
+  template: &#39;&#39;
+})
+export class AppComponent {
+  constructor(injector: Injector) {
+    customElements.define(&#39;hello-elements&#39;, createCustomElement(HelloElementsComponent, {injector}))
+  }
+}
+</code></pre>
+<p>AppComponentのコンストラクタでカスタムエレメントの定義をしています。<br> ここで定義(define)するカスタムエレメントの名前はComponentのselectorと揃える必要があることに注意してください。</p>
+<p>これで作成したComponentの登録は完了です。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="ビルド設定とPlayへの登録" duration="0">
+        <p>AngularElementsのファイルが作成できたので、これをビルドしてPlayから呼んでみましょう。</p>
+<h2 is-upgraded>Build用シェルの作成</h2>
+<p>まずはプロジェクトをビルドする必要があるので、ビルド設定を追加していきます。<br> 毎回手動でビルドするのは面倒なので、シェルスクリプトを作成して対応していきましょう。</p>
+<p><code>bin/build_elements.sh</code></p>
+<pre><code>#!/bin/bash
+
+declare -a targetVersions=(es5 es2015)
+angularProjectDir=./ui/angular-elements
+angularProjectOutputDir=$angularProjectDir/dist/angular-elements
+
+build() {
+  # angularのファイルをbuild
+  cd $angularProjectDir
+  yarn run build:elements
+  cd -
+
+  # build versionごとにファイルを作成する
+  for esVer in ${targetVersions[@]}; do
+    # ビルドされたファイルを追記するようになっているため、一度ファイルを空にする
+    cat /dev/null &gt; $angularProjectOutputDir/app-angular-${esVer}.js
+
+    # buildされたファイルを順次処理
+    for file in `find $angularProjectOutputDir -maxdepth 1 -type f -name \*&#34;$esVer&#34;\* `; do
+      # app-angular自身を対象から外すためチェック
+      if [ ! `echo ${file} | grep app-angular` ]; then
+        # 文末で改行しつつファイルを結合
+        cat $file &gt;&gt; $angularProjectOutputDir/app-angular-${esVer}.js
+        echo &#34;&#34; &gt;&gt; $angularProjectOutputDir/app-angular-${esVer}.js
+      fi
+    done
+  done
+}
+
+build
+</code></pre>
+<p>angularではes5, es2015用のファイルが出力されるため、それぞれ1つのファイルにまとめるようにビルドしています。<br> node用のubuntusイメージでは<code>#!/bin/sh</code>とするとエイリアスされているdashでシェルが起動してしまうため、別途インストールしていたbashを利用するようにしています。<br> dashだとarraryが上手く使えなかったのですよね...</p>
+<p>これでプロジェクトのビルドができるようになったので、次はこれらのファイルをPlayへ配置するシェルを作成します。</p>
+<p><code>bin/build_elements_to_play.sh</code></p>
+<pre><code>#!/bin/bash
+
+angularProjectDir=./ui/angular-elements
+angularProjectOutputDir=$angularProjectDir/dist/angular-elements
+buildFilePrefix=app-angular
+buildCssFile=styles.css
+jsDir=public/javascripts
+cssDir=public/stylesheets
+
+copy_to_play() {
+  # js
+  for file in `find $angularProjectOutputDir -maxdepth 1 -type f -name \*&#34;$buildFilePrefix&#34;\* `; do
+    cp -f $file $jsDir
+  done
+
+  # css
+  for file in `find $angularProjectOutputDir -maxdepth 1 -type f -name \*&#34;$buildCssFile&#34;\* `; do
+    cp -f $file $cssDir/elements.css
+  done
+
+}
+
+/bin/bash ./bin/build_elements.sh
+copy_to_play
+</code></pre>
+<p>通常利用する際には<code>build_elements_to_play</code>だけを実行すれば良いように先ほど作成したビルド用のシェルを実行しつつ、ファイルをPlayのPublicフォルダにコピーしています。</p>
+<p>それぞれあまり綺麗なシェルスクリプトではないのですが、動けば良いと思います。</p>
+<h2 is-upgraded>Play側でファイルの読み込み</h2>
+<p>作成したファイルが配置されたのでPlayから呼び出してみます。</p>
+<p><code>app/views/main.scala.html</code></p>
+<pre><code>@* js, cssを受け取れるように引数を追加。渡さなくてもいいようにデフォルト値も設定 *@
+@(
+  title:  String,
+  script: Html = Html(&#34;&#34;),
+  css:    Html = Html(&#34;&#34;),
+)(content: Html)
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&#34;en&#34;&gt;
+    &lt;head&gt;
+        &lt;title&gt;@title&lt;/title&gt;
+        @* resetのcssを適用 *@
+        &lt;link href=&#34;https://unpkg.com/sanitize.css&#34; rel=&#34;stylesheet&#34;/&gt;
+        @* NotoSansとfont-awesomeを追加 *@
+        &lt;link rel=&#34;stylesheet&#34; href=&#34;https://fonts.googleapis.com/earlyaccess/notosansjapanese.css&#34;&gt;
+        &lt;link href=&#34;https://use.fontawesome.com/releases/v5.6.1/css/all.css&#34; rel=&#34;stylesheet&#34;&gt;
+        &lt;link rel=&#34;stylesheet&#34; media=&#34;screen&#34; href=&#34;@routes.Assets.versioned(&#34;stylesheets/main.css&#34;)&#34;&gt;
+        @* angular-elementsのcss読み込み *@
+        &lt;link rel=&#34;stylesheet&#34; media=&#34;screen&#34; href=&#34;@routes.Assets.versioned(&#34;stylesheets/elements.css&#34;)&#34;&gt;
+        &lt;link rel=&#34;shortcut icon&#34; type=&#34;image/png&#34; href=&#34;@routes.Assets.versioned(&#34;images/favicon.png&#34;)&#34;&gt;
+        @* 引数の展開 *@
+        @css
+    &lt;/head&gt;
+    &lt;body&gt;
+      @* angular-elementsのComponentを呼び出し *@
+      &lt;app-root&gt;&lt;/app-root&gt;
+      &lt;hello-elements display-text=&#34;angular elements&#34;&gt;
+      &lt;/hello-elements&gt;
+
+      @content
+
+      &lt;script src=&#34;@routes.Assets.versioned(&#34;javascripts/main.js&#34;)&#34; type=&#34;text/javascript&#34;&gt;&lt;/script&gt;
+      @* angular-elementsのjs読み込み *@
+      &lt;script src=&#34;@routes.Assets.versioned(&#34;javascripts/app-angular-es5.js&#34;)&#34; type=&#34;text/javascript&#34;&gt;&lt;/script&gt;
+
+      @* 引数の展開 *@
+      @script
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>コメントにも追加していますがhead内でcssの読み込み。<br> bodyの下部でjavascriptの読み込みをしています。<br> またbody内で<code>app-root</code>, <code>hello-elements</code>を呼び出しています。</p>
+<p>カスタムエレメントとしてAngularのComponentを呼び出すときには@Inputに指定されている属性はハイフン繋ぎのケバブケースで呼び出す必要があることに注意してください。</p>
+<p>これでPlayをsbt runして赤文字の<code>angular elements</code>というテキストが表示されていれば成功です。</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

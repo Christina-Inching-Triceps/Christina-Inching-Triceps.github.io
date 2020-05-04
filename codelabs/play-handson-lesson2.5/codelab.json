@@ -4,11 +4,11 @@
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
   "updated": "2020-05-04T08:15:49Z",
-  "id": "play-handson-lesson2",
+  "id": "play-handson-lesson2.5",
   "duration": 0,
-  "title": "Play Framewworkハンズオン 2章",
+  "title": "Play Framewworkハンズオン 2.5章",
   "authors": "chiristina.inching.triceps",
-  "summary": "Play Framework Handson Lesson2",
+  "summary": "Play Framework Handson Lesson2.5",
   "source": "./tmp/mergedMd.md",
   "theme": "",
   "status": [
@@ -16,9 +16,10 @@
   ],
   "category": null,
   "tags": [
+    "angular",
     "play framework",
     "scala"
   ],
   "feedback": "https://github.com/Christina-Inching-Triceps/scala-play_handson/issues",
-  "url": "play-handson-lesson2"
+  "url": "play-handson-lesson2.5"
 }
