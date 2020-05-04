@@ -6,7 +6,7 @@
     "watch:pug": "pug src/app --doctype html --watch --pretty ",
     "ng": "ng",
     "start":     "yarn run watch:pug & ng serve --host=0.0.0.0 --port=5555",
-    "build": "ng build",
+    "build": "build:pug & ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
