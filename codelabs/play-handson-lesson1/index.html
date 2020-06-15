@@ -28,7 +28,8 @@
                   feedback-link="https://github.com/Christina-Inching-Triceps/scala-play_handson/issues">
     
       <google-codelab-step label="基本情報" duration="0">
-        <p>Lesson1ではPlayを利用して、簡単なCRUDを作成していきます。<br> 最初はPlayに集中するためにDB接続やその他周辺技術には触れません。<br> まずはPlay Frameworkをシンプルな状態のまま利用して、Play Frameworkに慣れていきましょう。</p>
+        <p>本ハンズオンではTwitterを模倣したシステムを構築しながらPlay Frameworkの使い方を学んでいきます。</p>
+<p>Lesson1ではPlayを利用して、簡単なCRUDを作成していきます。<br> 最初はPlayに集中するためにDB接続やその他周辺技術には触れません。<br> まずはPlay Frameworkをシンプルな状態のまま利用して、Play Frameworkに慣れていきましょう。</p>
 <p>またScala-Playで開発を行うにあたり必要となる基本的な知識・言葉については、非常に簡単にではありますが補足していきます。<br> 既にご存知の内容であれば、基本情報のページはスキップしていただいて問題ありません。</p>
 <h2 is-upgraded>SBTとは</h2>
 <p>SBTはScalaの考案者が創設したLightbend社が作成しているビルドツールです。<br> ビルドツールというのは自分が書いたプログラムを実際にパソコン上で動作させるために必要な手順を支援してくれるツールです。</p>
@@ -93,9 +94,11 @@
 <p>ハンズオンが作成されている環境がsbt1.3系を利用しているため、これを推奨します。</p>
 <h2 is-upgraded>Playの導入</h2>
 <p>早速ですがPlayの導入を行っていきます。<br> sbtのコマンドからPlayのシードプロジェクトを作成してみましょう。</p>
+<p>今回は本ハンズオン用のリポジトリを利用する前提で進めます。</p>
 <p>任意のプロジェクトディレクトリを作成して、以下のコマンドを実行してください。<br> あくまで例になりますが、以下にMacでの作業をイメージしてコマンドを記載していきます。</p>
 <pre><code># 参照: https://www.playframework.com/documentation/2.8.x/NewApplication
-$ cd ~/Documents/workspace/
+$ git clone git@github.com:Christina-Inching-Triceps/scala-play_handson.git
+$ cd scala-play_handson/lesson1/handson/
 $ sbt new playframework/play-scala-seed.g8
 # ... 省略
 
@@ -116,7 +119,7 @@ organization [com.example]: com.example
     └── test
 </code></pre>
 <p><code>sbt new</code>が完了したら、ローカルでサーバを起動して動作を確認してみましょう。</p>
-<pre><code>$ cd {your_project_root}
+<pre><code>$ cd play-handson
 $ sbt run
 
 # .... 以下の表示がでたらサーバが起動しています。
@@ -126,13 +129,12 @@ $ sbt run
 # 
 # (Server started, use Enter to stop and go back to the console...)
 </code></pre>
-<p>サーバが起動したら、ブラウザからアクセスをしてみましょう。<br><a href="http://localhost:9000" target="_blank">http://localhost:9000</a></p>
+<p>初回起動は関連するライブラリのダウンロードなどが行われるため、時間がかかります。<br> サーバが起動したら、ブラウザからアクセスをしてみましょう。<br><a href="http://localhost:9000" target="_blank">http://localhost:9000</a></p>
 <p>以下の画面が表示されていればOKです。</p>
 <p class="image-container"><img style="width: 450.00px" src="img/90d87c3399aa3323.png"></p>
-<p>導入自体はこれで完了になります。<br> 簡単で良いですね。</p>
+<p>Playの導入はこれで完了になります。<br> 簡単で良いですね。</p>
 <h2 is-upgraded>統合開発環境(IntelliJ IDEA)のセットアップ</h2>
 <p>今回はIntelliJ IDEA 無償版のセットアップの手順を記載していきます。</p>
-<p>Visual Studio Code + Metalsについては、いつの日にか手順を作ってみたいと思っております。<br> 今回は作っておりません。</p>
 <h3 is-upgraded>IDEAのダウンロード</h3>
 <p><a href="https://www.jetbrains.com/ja-jp/idea/" target="_blank">こちらのサイト</a>からIDEAのダウンロードリンクを押下してください。</p>
 <p class="image-container"><img style="width: 450.00px" src="img/4b98bb8566eaabe9.png"></p>
@@ -197,14 +199,19 @@ $ sbt run
 ├── target
 └── test
 </code></pre>
-<p>基本的に<code>scala</code>ファイルは<code>app</code>以下に配置していきます。<br><code>views</code>もこのapp以下に配置されていますね。<br><code>views</code>は名前の通り画面側の実装を配置するのですが、PlayFrameworkではtwirlというscalaとhtmlの混ざったViewテンプレートを利用します。</p>
-<p><code>conf</code>には設定関連が配置されています。</p>
-<p><code>application.conf</code>はメインの設定ファイルで、システムから利用する設定情報などを記載します。<br> 記載された設定は<code>controller</code>にDIされたconfigインスタンスから利用することが多いです。<br> 今後一番利用することになる設定ファイルなので覚えておきましょう。</p>
+<h2 is-upgraded>appフォルダ</h2>
+<p>アプリケーションのプログラムファイルは<code>app</code>以下に配置していきます。<br> サーバサイドのプログラム以外に、画面表示のための<code>views</code>もこのapp以下に配置されていますね。</p>
+<p><code>views</code>は名前の通り画面側の実装を配置するのですが、PlayFrameworkではtwirlというscalaとhtmlの混ざったViewテンプレートを利用します。</p>
+<h2 is-upgraded>confフォルダ</h2>
+<p><code>conf</code>には設定関連のファイルが配置されています。</p>
+<p><code>application.conf</code>はメインの設定ファイルで、システムから利用する設定情報などを記載します。<br> 細かく管理するためにファイル分割を行うことも可能ですが、システムを制御するための設定情報はこのファイルに記載していきましょう。<br> 今後一番利用することになる設定ファイルなので覚えおいてください。</p>
 <p><code>logback.xml</code>はログ出力フォーマットや出力条件などを設定するもので、Playで採用されている<code>logback</code>というライブラリのための設定ファイルになります。<br> Play独自のものではないため、本ハンズオンでは詳細には取り扱いません。<br> 気になる方はlogbackというワードで調べてみると、細かい設定方法が確認できます。</p>
-<p><code>messages</code>は多言語対応や、メッセージ管理用の設定でバリデーションメッセージなど各メッセージの管理に利用できます。<br><code>routes</code>はルーティング情報を記載するファイルです。分割して管理することなども可能です。<br> システムから利用される際には、このファイルの情報がコンパイルされたClassファイルが利用されるようになっています。</p>
-<p><code>project</code>以下にはsbt系の設定ファイルを切り出して配置します。<br> ここで定義したものを<code>build.sbt</code>で読み込んで利用したりします。<br> 例えばscalafmtなどのプラグインを<code>plugins.sbt</code>に追加して利用したりします。</p>
+<p><code>messages</code>は多言語対応や、メッセージ管理用の設定でバリデーションメッセージなど各メッセージの管理に利用できます。<br> 本ハンズオンでも基本的な使い方を取り扱っているので、利用方法はその際に紹介します。</p>
+<p><code>routes</code>はルーティング情報を記載するファイルです。こちらも分割して管理することなども可能です。<br> システムから利用される際には、このファイルの情報がコンパイルされたClassファイルが利用されるようになっています。</p>
+<h2 is-upgraded>sbt関連</h2>
 <p><code>build.sbt</code>はプロジェクトのビルド設定ファイルです。<br> ビルドするための依存ライブラリを記述したり、デプロイ設定を記載したりします。<br> またsbt shellにコマンドを追加するときにも、このファイルに追加を行っていきます。</p>
-<p>概ねフォルダやファイル名が示す通りですが、このような構成になっています。<br> 開発するだけであればapp以下, routesあたりが一番よく触るファイルになると思います。</p>
+<p><code>project</code>以下にもsbt系の設定ファイルを切り出して配置します。<br> ここで定義したものを<code>build.sbt</code>で読み込んで利用することなどが多いです。</p>
+<p>例えばbuild.sbtに記載する情報のうち依存関係に関連するものをDependencies.sbtとして切り出して、build.sbtにimportする、という使い方もできます。<br> 他にはscalafmtなどのプラグインを<code>plugins.sbt</code>に追加して利用できるようにしたりすることが多いです。</p>
 
 
       </google-codelab-step>
@@ -212,22 +219,23 @@ $ sbt run
       <google-codelab-step label="一覧ページ作成" duration="0">
         <p>それではPlayの機能を触りながら一覧ページから作成していきましょう。<br> 前述の通り、今回はPlayに集中するためDBへのアクセスは行わずに機能を作成していきます。</p>
 <h2 is-upgraded>ルーティング</h2>
-<p>まずはリクエストに対する処理の設定をみていきます。<br> Playでは<code>conf/routes</code>のファイルでルーティングを管理しています。<br> 今の状態の<code>conf/routes</code>ファイルを開いてみると以下のようになっていると思います。</p>
+<p>まずはリクエストに対する処理の設定をみていきます。</p>
+<p>先述の通り、Playでは<code>conf/routes</code>のファイルでルーティングを管理しています。<br> 今の状態の<code>conf/routes</code>ファイルを開いてみると、以下のようになっています。</p>
 <p><code>conf/routes</code></p>
 <pre><code># ... 一部抜粋
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
 </code></pre>
-<p>これは<code>GET</code>Methodの<code>/</code>へのリクエストに対して<code>controllers.HomeController.index</code>を設定すると言うことになります。<br> この設定のおかげで、Playは<code>http://localhost:9000</code>、つまりルート(<code>/</code>)に対して<code>HomeController</code>の<code>index</code>アクションを実行するということを理解できるようになります。</p>
+<p>これは<code>GET</code>Methodの<code>/</code>へのリクエストに対して<code>controllers.HomeController.index</code>を設定するという設定になります。<br> この設定のおかげで、Playは<code>http://localhost:9000</code>に対して<code>/</code>でリクエストを受け取り、<code>HomeController</code>の<code>index</code>アクションを実行するということを理解できるようになります。</p>
 <p>今回は一覧表示機能を作成したいので、以下のようにルーティングを設定してみましょう。</p>
 <p><code>conf/routes</code></p>
 <pre><code>GET     /tweet/list                 controllers.tweet.TweetController.list
 </code></pre>
-<p>今回は意図的に<code>tweet</code>というパッケージを間に挟んでいます。<br> よくあるサンプルでは独自にパッケージを追加したものがほとんどなく、今後の参考のためにこのようにしています。</p>
+<p>今回は意図的に<code>tweet</code>というパッケージを間に挟んでいます。<br> よくあるサンプルでは独自にパッケージを追加したものがほとんどないためです。</p>
 <p>次は設定したルーティングに必要なコントローラーを作成してきましょう。</p>
 <h2 is-upgraded>Controllerの作成</h2>
-<p>PlayではControllerクラスでリクエストに対しての処理を受け取ります。<br> Controller内にあるリクエストに対するメソッドは一般的にアクションと呼ばれます。(他のプログラミング言語、フレームワークでも同様です)</p>
-<p>ここでは<code>TweetController.scala</code>を作成し、その中に<code>list</code>アクションを作成していきます。</p>
+<p>Playでは<code>app/controllers</code>以下にControllerクラスを作成し、リクエストに対する処理を実装していきます。<br> 余談ですが、Controllerにあるリクエストに対するメソッドは、一般的にアクションと呼ばれますので覚えておくと良いでしょう。(他のプログラミング言語、フレームワークでも同様です)</p>
+<p>今回も慣習に合わせて<code>app/controllers</code>にファイルを作成していきます。<br> 先ほど<code>routes</code>ファイルに記載した設定に合わせて、<code>app/controllers/tweet/TweetController.scala</code>を作成し、その中に<code>list</code>アクションを実装していきます。</p>
 <p><code>app/controller/tweet/TweetController.scala</code></p>
 <pre><code>package controllers.tweet
 
@@ -254,16 +262,16 @@ class TweetController @Inject()(val controllerComponents: ControllerComponents) 
   }
 }
 </code></pre>
-<p>プログラム内にコメントで各実装の説明を記載していますが、少し難しい部分も多いためよくわからない部分は慣れるまでは一旦深追いしなくても大丈夫です。<br> 今回覚えておきたいのは以下の部分です。</p>
+<p>プログラム内にコメントで各実装の説明を記載していますが、少し難しい部分も多いためよくわからない部分は慣れるまでは深追いしなくても大丈夫です。<br> 今回覚えておきたいのは以下の部分です。</p>
 <pre><code>def list() =  Action { implicit request: Request[AnyContent] =&gt;
   Ok(views.html.tweet.list())
 }
 </code></pre>
 <p>まず<code>Action { ...</code> の部分は言語として用意された構文ではありません。<br> 正確ではありませんが、イメージとしては<code>Action(request: Request =&gt; { block })</code> というメソッドの呼び出しになります。</p>
-<p>この<code>{ block }</code>の部分が<code>implicit request: Request[AnyContent] =&gt;</code>以後に記載されているプログラム全体です。<br> 今回の場合には以下の部分がブロック内の実装になっていますね。</p>
+<p>この<code>{ block }</code>の部分が<code>{ implicit request: Request[AnyContent] =&gt; ... }</code>以後に記載されているプログラム全体です。<br> 今回の場合には以下の部分がブロック内の実装になっていますね。</p>
 <pre><code>Ok(views.html.tweet.list())
 </code></pre>
-<p>この部分はHTTPステータスコードの<code>200 OK</code>をreturnしつつ、レスポンスとして<code>views.html.tweet.list</code>の画面を返すという意味になります。</p>
+<p>この部分はHTTPステータスコードの<code>200 OK</code>をreturnしつつ、レスポンスとして<code>views.html.tweet.list</code>の画面を返すという意味になります。<br><code>200 OK</code>にあたるのが<code>Ok()</code>というメソッドのような部分です。<br> これ以外にも<code>Redirect()</code>や<code>NotFound()</code>などがあり、それぞれが名前の示すステータスコードに紐づいています。</p>
 <p>これで<code>http://localhost:9000/list</code>のリクエストに対してのアクションを作成できました。<br> 一度プログラムをコンパイルしてみましょう。<br> コンパイルはターミナルから、以下のコマンドを実行することで行えます。</p>
 <pre><code>$ sbt compile
 # sbt ~compileとするとファイル変更を検知するたびに自動ビルドされます。お好みで使い分けてください。
@@ -271,8 +279,9 @@ class TweetController @Inject()(val controllerComponents: ControllerComponents) 
 <p>まだエラーになってしまっていますね。<br> それはこのリクエストに対するレスポンスに指定している<code>views.html.tweet.list</code>のファイルが存在しないからです。</p>
 <p>次は一覧画面のためのhtmlを作成していきましょう。</p>
 <h2 is-upgraded>画面の作成</h2>
-<p>Playではデフォルトでは<code>Twirl</code>というテンプレートエンジンを利用して画面を作成します。<br> Twirlのファイルは<code>views/</code>直下に配置されており、拡張子が<code>.scala.html</code>となっています。<br> 今回は<code>views/tweet/list.scala.html</code>を作成していきます。</p>
-<p>このフォルダ構成が先ほどの<code>Ok(views.html.tweet.list())</code>の指定とマッピングされています。<br> 以下のようなイメージですね。<br><code>views.html</code>   =&gt; <code>views/</code><br><code>tweet.list()</code> =&gt; <code>tweet/list.scala.html</code></p>
+<p>Playのデフォルトでは<code>Twirl</code>というテンプレートエンジンを利用して画面を作成します。<br> Twirlのファイルは<code>app/views/</code>以下に配置されており、拡張子が<code>.scala.html</code>となっています。<br> 今回は<code>views/tweet/list.scala.html</code>を作成していきます。</p>
+<p>view以下のフォルダ構成は先ほどの<code>Ok(views.html.tweet.list())</code>の指定とマッピングされています。<br> 今回の<code>views.html.tweet.list()</code>の場合は<code>views/tweet/list.scala.html</code>ですね。</p>
+<p>この紐付き解決は以下のような形になっています。<br><code>views.html</code>   =&gt; <code>views/</code><br><code>tweet.list()</code> =&gt; <code>tweet/list.scala.html</code></p>
 <p>では、ファイルを作成して、まずは以下のように中身を実装していきましょう。</p>
 <p><code>app/views/tweet/list.scala.html</code></p>
 <pre><code>@* これはTwirlのコメントです。
@@ -302,7 +311,7 @@ case class Tweet(
   content: String
 )
 </code></pre>
-<p>非常にシンプルなクラスになりました。<br><code>case class</code>についての説明は省略しますが、非常に雑に説明すると<code>toString</code>, <code>equals</code>がいい感じに実装されていたり<code>apply</code>や<code>unapply</code>メソッドなどが実装されている便利なClassです。</p>
+<p>非常にシンプルなクラスになりました。<br><code>case class</code>についての説明は省略しますが、非常に雑に説明すると<code>toString</code>, <code>equals</code>がいい感じに実装されていたりする便利なClassです。</p>
 <h3 is-upgraded>モデルをViewへ渡す</h3>
 <p>先ほど作成したControllerを修正して、モデルをコントローラからViewへ渡してみましょう。</p>
 <p><code>app/controllers/tweet/TweetController.scala</code></p>
@@ -315,14 +324,12 @@ case class Tweet(
   Ok(views.html.tweet.list(tweets))
 }
 </code></pre>
-<p>今回はDBを利用しないので、Controller側に決め打ちでモデルのインスタンスを実装しています。<br><code>views.html.tweet.list()</code>に引数としてtweetsを渡すところまではできました。<br> 次はView側で引き渡されたTweetを受け取って表示をしてみます。</p>
+<p>今回はDBを利用しないので、Controller側に決め打ちでモデルのインスタンスを実装しています。<br><code>views.html.tweet.list()</code>に引数としてtweetsを渡しているところにも注目してください。</p>
+<p>Controllerからviewへモデルを渡せたので、次はView側で引き渡されたTweetを受け取って表示をしてみます。</p>
 <h3 is-upgraded>Viewでモデルを受け取り表示</h3>
 <p>早速コードを修正していきましょう。</p>
 <p><code>app/views/tweet/list.scala.html</code></p>
-<pre><code>@* Twirl側でもクラスを正しく認識するためにscalaファイルと同様にimportが必要です。  *@
-@import models.Tweet
-
-@*
+<pre><code>@*
 以下はview templeteでの引数を受け取る記載です。
 今回はTweetの一覧を取得するため@(tweets: Seq[Tweet]) となっています。
 *@
@@ -338,7 +345,7 @@ case class Tweet(
   &lt;/ul&gt;
 }
 </code></pre>
-<p>修正内容はプログラム上のコメントの通りになりますが、新しくimportと引数の受け取り、受け取ったインスタンの出力を追加してあります。<br> Twirlの記法については<a href="https://www.playframework.com/documentation/ja/2.3.x/ScalaTemplates" target="_blank">こちら</a>を参考にしてください。</p>
+<p>修正内容はプログラム上のコメントの通りになりますが、新しく引数の受け取り、受け取ったインスタンの出力を追加してあります。<br> Twirlの記法については<a href="https://www.playframework.com/documentation/ja/2.3.x/ScalaTemplates" target="_blank">こちら</a>を参考にしてください。</p>
 <p>これで一覧表示の実装は完了です。<br> ブラウザから動作を確認してみましょう。<br><a href="http://localhost:9000/tweet/list" target="_blank">http://localhost:9000/tweet/list</a></p>
 <p>以下のように表示されていればOKです。</p>
 <p class="image-container"><img style="width: 450.00px" src="img/d67ae1282871e102.png"></p>
@@ -387,29 +394,27 @@ class TweetController @Inject()(val controllerComponents: ControllerComponents) 
 }
 
 </code></pre>
-<p>まずtweetsをフィールドとして定義し直しています。<br> これはDBなしでデータを一定期間保持しておくための実装です。</p>
+<p>まずtweetsをクラスのフィールドとして定義し直しています。<br> これはDBなしでデータを一定期間保持しておくための実装です。</p>
 <p>showメソッドの中でOption型を直接getしていますが、これはnullに対して安全な処理ができるメリットを捨ててしまうことになるため、後ほど修正していきます。</p>
 <p><code>views/tweet/show.scala.html</code></p>
-<pre><code>@import models.Tweet
-@(tweet: Tweet)
+<pre><code>@(tweet: Tweet)
 
 @main(&#34;詳細画面&#34;) {
   &lt;h1&gt;詳細画面です&lt;/h1&gt;
   &lt;div id=&#34;detail&#34;&gt;
     &lt;div&gt;id: @tweet.id&lt;/div&gt;
-    &lt;div&gt;id: @tweet.content&lt;/div&gt;
+    &lt;div&gt;content: @tweet.content&lt;/div&gt;
   &lt;/div&gt;
 }
 </code></pre>
-<p>TwirlについてはSeqだった引数がTweetになっているくらいの変化しかありません。</p>
+<p>Twirlについてはlistページとほとんど同じですね。</p>
 <p>ここまでできたら、以下のURLにアクセスして画面が正常に表示できるか確認してみましょう。<br><a href="http://localhost:9000/tweet/1" target="_blank">http://localhost:9000/tweet/1</a></p>
 <p>以下のように表示されていればOKです。</p>
 <p class="image-container"><img style="width: 450.00px" src="img/efc5bfc9aebbcbcd.png"></p>
 <h2 is-upgraded>一覧からのリンク作成</h2>
 <p>詳細ページが完成したので、次は先きほど作成した一覧ページからリンクを通してみます。</p>
 <p><code>views/tweet/list.scala.html</code></p>
-<pre><code>@import models.Tweet
-@(tweets: Seq[Tweet])
+<pre><code>@(tweets: Seq[Tweet])
 
 @main(&#34;一覧画面&#34;) {
   &lt;h1&gt;一覧画面です&lt;/h1&gt;
@@ -423,9 +428,9 @@ class TweetController @Inject()(val controllerComponents: ControllerComponents) 
   &lt;/ul&gt;
 }
 </code></pre>
-<p>href部分ではroutesファイルの設定から、紐づくURLを作成するようにしてあります。<br> 書き方は<code>{Controllerのパッケー�</code>��}.routes.{Controller名}となります。</p>
-<p>コメントにも記載していますが、ウェブ上で良くみる<code>@routes</code>から始まる書き方は、Playのデフォルトで<code>controllers.routes</code>がインポートされているから動作しているものです。</p>
-<p>ここを理解していないと独自でパッケージを切ったりしていく時に非常に苦労することになるので頭の隅に残しておきましょう。</p>
+<p><code>href=&#34;@controllers.tweet.routes.TweetController.show(tweet.id.getOrElse(0))&#34;</code>の部分では、routesファイルの設定からURLを作成するようにしてあります。<br> 書き方は<code>{Controllerのパッケー�</code>��}.routes.{Controller名}となります。</p>
+<p>コメントにも記載していますが、ウェブ上で良くみる<code>@routes</code>から始まる書き方は、Playがデフォルトで<code>controllers.routes</code>をインポートしているために{controllers}が省略されたものです。</p>
+<p>ここを理解していないと独自でパッケージを切ったりしていく時に非常に苦労することになるので、頭の隅に残しておきましょう。</p>
 <p>では、最後に動作確認です。<br><a href="http://localhost:9000/tweet/list" target="_blank">http://localhost:9000/tweet/list</a></p>
 <p>以下のようにリンクが表示され、リンククリックで詳細ページが表示されたら完了です。</p>
 <p class="image-container"><img style="width: 450.00px" src="img/e470f5872339d82.png"></p>
