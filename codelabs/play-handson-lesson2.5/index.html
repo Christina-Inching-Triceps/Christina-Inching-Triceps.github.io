@@ -30,12 +30,12 @@
       <google-codelab-step label="Docker環境のセットアップ" duration="0">
         <p>今までと同様にDockerで環境を構築していきます。</p>
 <p>最初にAngular Elements用のフォルダを作成していきます。<br> 今回はuiというフォルダで作業を進めていきます。</p>
-<pre><code>$ mkdir ui
+<pre><code language="language-sh" class="language-sh">$ mkdir ui
 </code></pre>
 <p>作業用のフォルダが作成できたので、引き続きDockerfileの作成とdocker-compose.yamlの編集をしていきましょう。</p>
 <p>まず最初にDockerfileです。</p>
 <p><code>docker/angular/Dockerfile</code></p>
-<pre><code>FROM node:10.16.3
+<pre><code language="language-dockerfile" class="language-dockerfile">FROM node:10.16.3
 
 RUN apt-get update
 RUN apt-get install -y bash
@@ -46,7 +46,7 @@ RUN npm install -g @angular/cli
 <p>その他にはngコマンドを利用するためのangular/cliの導入を行っています。</p>
 <p>次はdocker-composeファイルの変更です。</p>
 <p><code>docker-compose.yaml</code></p>
-<pre><code>  play_angular:
+<pre><code language="language-yml" class="language-yml">  play_angular:
     build: ./docker/angular
     ports:
       - &#34;5555:5555&#34;
@@ -66,7 +66,7 @@ RUN npm install -g @angular/cli
         <p>作業用の環境が構築できたので、本題のAngular-Elementsをセットアップしていきます。</p>
 <h2 is-upgraded>Angularプロジェクトの作成</h2>
 <p>まずはAngularプロジェクトの作成を行います。</p>
-<pre><code>$ cd {projec_root}
+<pre><code language="language-sh" class="language-sh">$ cd {projec_root}
 $ docker-compose up -d
 # docker containerへアクセス
 $ docker-compose exec play_angular bash
@@ -83,7 +83,7 @@ $ cd angular-elements
 <p>AngularElementsを利用する場合routerはあまり使いませんが、使うこともできるのでインストールしてみています。<br> CSSについてはお好みで選択いただいて問題ありません。</p>
 <h2 is-upgraded>Angularのプラグインを追加</h2>
 <p>プロジェクトが作成できたので、最低限必要な設定を行っていきます。<br> まずは利用するプラグインのインストールです。</p>
-<pre><code># 最終的にhtml, jsにビルドされるためdevelop用としてインストール
+<pre><code language="language-sh" class="language-sh"># 最終的にhtml, jsにビルドされるためdevelop用としてインストール
 $ yarn add -D pug pug-cli typescript@3.8.3
 
 # angular-elementsを利用するためにelementsをインストール
@@ -96,7 +96,7 @@ $ yarn add @angular/material @ngrx/store
 <h2 is-upgraded>package.jsonの設定</h2>
 <p>プラグインがインストールできたら、開発やビルドを行うためにpackage.jsonを設定していきます。</p>
 <p><code>ui/angular-elements/package.json</code></p>
-<pre><code>{
+<pre><code language="language-json" class="language-json">{
   &#34;name&#34;: &#34;angular-elements&#34;,
   &#34;version&#34;: &#34;0.0.0&#34;,
   &#34;scripts&#34;: {
@@ -125,7 +125,7 @@ build:elements -&gt; angular-elementsのファイルをprod設定でビルドす
 <h2 is-upgraded>tsconfig.jsonの修正</h2>
 <p>次にtsconfigの修正を行います。</p>
 <p><code>ui/angular-elements/package.json</code></p>
-<pre><code>  ... 省略
+<pre><code language="language-json" class="language-json">  ... 省略
   &#34;angularCompilerOptions&#34;: {
     &#34;fullTemplateTypeCheck&#34;: true,
     &#34;strictInjectionParameters&#34;: true,
@@ -143,7 +143,7 @@ build:elements -&gt; angular-elementsのファイルをprod設定でビルドす
 <h2 is-upgraded>カスタムエレメントとして利用するComponentを作成</h2>
 <p>今回は<code>@Input()</code>として受け取った文字列をそのまま表示する、シンプルなComponentを作成します。</p>
 <p><code>ui/angular-elements/src/app/sample/hello-elements.ts</code></p>
-<pre><code>import { Component, Input }  from &#39;@angular/core&#39;;
+<pre><code language="language-typescript" class="language-typescript">import { Component, Input }  from &#39;@angular/core&#39;;
 
 @Component({
   selector:    &#39;hello-elements&#39;,
@@ -157,25 +157,25 @@ export class HelloElementsComponent {
 }
 </code></pre>
 <p><code>ui/angular-elements/src/app/sample/hello-elements.pug</code></p>
-<pre><code>p.custom
+<pre><code language="language-pug" class="language-pug">p.custom
   | &#123;&#123; displayText }}
 </code></pre>
 <p><code>ui/angular-elements/src/app/sample/hello-elements.scss</code></p>
-<pre><code>:host{
+<pre><code language="language-scss" class="language-scss">:host{
   .custom {
     color: red;
   }
 }
 </code></pre>
 <p><code>ui/angular-elements/src/app/sample/index.ts</code></p>
-<pre><code>export * from &#39;./hello-elements&#39;
+<pre><code language="language-scss" class="language-scss">export * from &#39;./hello-elements&#39;
 </code></pre>
 <p>特に複雑な部分もない実装ですね。</p>
 <h2 is-upgraded>作成したComponetをCustomElementsとして登録</h2>
 <p>Componentが作成できたので、CustomElementsとして利用できるように登録していきます。</p>
 <p>まずは<code>app.module.ts</code>に登録します。</p>
 <p><code>ui/angular-elements/src/app/app.module.ts</code></p>
-<pre><code>import { BrowserModule }          from &#39;@angular/platform-browser&#39;;
+<pre><code language="language-typescript" class="language-typescript">import { BrowserModule }          from &#39;@angular/platform-browser&#39;;
 import { NgModule }               from &#39;@angular/core&#39;;
 import { AppComponent }           from &#39;./app.component&#39;;
 import { HelloElementsComponent } from &#39;src/app/sample&#39;;
@@ -222,7 +222,7 @@ export class AppComponent {
 <h2 is-upgraded>Build用シェルの作成</h2>
 <p>まずはプロジェクトをビルドする必要があるので、ビルド設定を追加していきます。<br> 毎回手動でビルドするのは面倒なので、シェルスクリプトを作成して対応していきましょう。</p>
 <p><code>bin/build_elements.sh</code></p>
-<pre><code>#!/bin/bash
+<pre><code language="language-sh" class="language-sh">#!/bin/bash
 
 declare -a targetVersions=(es5 es2015)
 angularProjectDir=./ui/angular-elements
@@ -256,7 +256,7 @@ build
 <p>angularではes5, es2015用のファイルが出力されるため、それぞれ1つのファイルにまとめるようにビルドしています。<br> node用のubuntusイメージでは<code>#!/bin/sh</code>とするとエイリアスされているdashでシェルが起動してしまうため、別途インストールしていたbashを利用するようにしています。<br> dashだとarraryが上手く使えなかったのですよね...</p>
 <p>これでプロジェクトのビルドができるようになったので、次はこれらのファイルをPlayへ配置するシェルを作成します。</p>
 <p><code>bin/build_elements_to_play.sh</code></p>
-<pre><code>#!/bin/bash
+<pre><code language="language-sh" class="language-sh">#!/bin/bash
 
 angularProjectDir=./ui/angular-elements
 angularProjectOutputDir=$angularProjectDir/dist/angular-elements
@@ -286,7 +286,7 @@ copy_to_play
 <h2 is-upgraded>Play側でファイルの読み込み</h2>
 <p>作成したファイルが配置されたのでPlayから呼び出してみます。</p>
 <p><code>app/views/main.scala.html</code></p>
-<pre><code>@* js, cssを受け取れるように引数を追加。渡さなくてもいいようにデフォルト値も設定 *@
+<pre><code language="language-html" class="language-html">@* js, cssを受け取れるように引数を追加。渡さなくてもいいようにデフォルト値も設定 *@
 @(
   title:  String,
   script: Html = Html(&#34;&#34;),
