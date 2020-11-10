@@ -267,8 +267,8 @@ class TweetController @Inject()(val controllerComponents: ControllerComponents) 
   Ok(views.html.tweet.list())
 }
 </code></pre>
-<p>まず<code>Action { ...</code> の部分は言語として用意された構文ではありません。<br> 正確ではありませんが、イメージとしては<code>Action(request: Request =&gt; { block })</code> というメソッドの呼び出しになります。</p>
-<p>この<code>{ block }</code>の部分が<code>{ implicit request: Request[AnyContent] =&gt; ... }</code>以後に記載されているプログラム全体です。<br> 今回の場合には以下の部分がブロック内の実装になっていますね。</p>
+<p>まず<code>Action { ...</code> の部分は言語として用意された構文ではありません。<br> 正確ではありませんが、イメージとしては<code>Action(request: Request => { block })</code> というメソッドの呼び出しになります。</p>
+<p>この<code>{ block }</code>の部分が<code>{ implicit request: Request[AnyContent] => ... }</code>以後に記載されているプログラム全体です。<br> 今回の場合には以下の部分がブロック内の実装になっていますね。</p>
 <pre><code language="language-scala" class="language-scala">Ok(views.html.tweet.list())
 </code></pre>
 <p>この部分はHTTPステータスコードの<code>200 OK</code>をreturnしつつ、レスポンスとして<code>views.html.tweet.list</code>の画面を返すという意味になります。<br><code>200 OK</code>にあたるのが<code>Ok()</code>というメソッドのような部分です。<br> これ以外にも<code>Redirect()</code>や<code>NotFound()</code>などがあり、それぞれが名前の示すステータスコードに紐づいています。</p>
@@ -428,7 +428,7 @@ class TweetController @Inject()(val controllerComponents: ControllerComponents) 
   &lt;/ul&gt;
 }
 </code></pre>
-<p><code>href=&#34;@controllers.tweet.routes.TweetController.show(tweet.id.getOrElse(0))&#34;</code>の部分では、routesファイルの設定からURLを作成するようにしてあります。<br> 書き方は<code>{Controllerのパッケー�</code>��}.routes.{Controller名}となります。</p>
+<p><code>href="@controllers.tweet.routes.TweetController.show(tweet.id.getOrElse(0))"</code>の部分では、routesファイルの設定からURLを作成するようにしてあります。<br> 書き方は<code>{Controllerのパッケー�</code>��}.routes.{Controller名}となります。</p>
 <p>コメントにも記載していますが、ウェブ上で良くみる<code>@routes</code>から始まる書き方は、Playがデフォルトで<code>controllers.routes</code>をインポートしているために{controllers}が省略されたものです。</p>
 <p>ここを理解していないと独自でパッケージを切ったりしていく時に非常に苦労することになるので、頭の隅に残しておきましょう。</p>
 <p>では、最後に動作確認です。<br><a href="http://localhost:9000/tweet/list" target="_blank">http://localhost:9000/tweet/list</a></p>
@@ -686,7 +686,7 @@ extends BaseController with I18nSupport {
 </code></pre>
 <p><code>bindFromRequest</code>はimplicitでrequestを受け取っています。<br> そのため、リクエスト情報からformで設定したマッピング情報を元に入力チェックと値変換を行うことができるんですね。<br> そして、その処理の成否によって<code>fold</code>で処理を分岐しているという動きです。</p>
 <p>失敗時には400のBadRequestとして受け取ったフォームデータにエラーメッセージを追加して元の画面に戻しています。<br> 成功時には受け取ったデータから新しいTweetを作成して一覧画面へリダイレクトしています。</p>
-<p>ちなみに、<code>fold()()</code>で失敗を左、成功を右とするような動きは<code>Option</code>や<code>Either</code>にも似たようなものがあります。<br> 成功は<code>That&#39;s Right</code>的に右にする慣習があります。</p>
+<p>ちなみに、<code>fold()()</code>で失敗を左、成功を右とするような動きは<code>Option</code>や<code>Either</code>にも似たようなものがあります。<br> 成功は<code>That's Right</code>的に右にする慣習があります。</p>
 <p><code>Seq</code>の<code>fold</code>はまた雰囲気の違う動きになるのですが、この辺の違いは圏論でいうところの<code>Catamorphism</code>というものを理解するとわかるようになるみたいです。</p>
 <p>私はこの辺りは良くわからないので省略しますが、このfoldの使い方は割とよくあるみたいなので気が向いた際に学習してみたり、頭の隅に置いておくとコードが読みやすくなるかもしれません。</p>
 <p>では、処理が書けたの実際に登録画面から登録してみてください。 <a href="http://localhost:9000/tweet/store" target="_blank">http://localhost:9000/tweet/store</a></p>
@@ -992,14 +992,14 @@ def delete() = Action { implicit request: Request[AnyContent] =&gt;
 <pre><code>@main(&#34;一覧画面&#34;) {
 }
 </code></pre>
-<p>よくみると<code>main.scala.html</code>の<code>&lt;head&gt;</code>内に<code>@title</code>があり、<code>&lt;body&gt;</code>の下に<code>@content</code>という記載があります。<br> この変数は<code>main.scala.html</code>の上部で宣言されている引数になります。<br> 以下の部分ですね。</p>
+<p>よくみると<code>main.scala.html</code>の<code><head></code>内に<code>@title</code>があり、<code><body></code>の下に<code>@content</code>という記載があります。<br> この変数は<code>main.scala.html</code>の上部で宣言されている引数になります。<br> 以下の部分ですね。</p>
 <pre><code>@* ここ *@
 @(title: String)(content: Html)
 </code></pre>
-<p><code>list.scala.html</code>の<code>@main</code>で引数に渡している<code>&#34;一</code>覧画面&#34;が<code>main.scala.html</code>の引数<code>title</code>に入っています。<br> もう一つの引数である<code>content: HTML</code>部分は、各Twirlで記述されているHTMLが格納される仕組みです。</p>
+<p><code>list.scala.html</code>の<code>@main</code>で引数に渡している<code>"一</code>覧画面&#34;が<code>main.scala.html</code>の引数<code>title</code>に入っています。<br> もう一つの引数である<code>content: HTML</code>部分は、各Twirlで記述されているHTMLが格納される仕組みです。</p>
 <p>そのため各画面のTwirlで記述したHTMLがbody以下に展開されるようになります。</p>
 <p>listページなどの<code>{}</code>の部分が引数になるのは、最初はわかりづらいですがscalaでは<code>{}</code>で引数を渡せます。</p>
-<p>普段使っているmapメソッドも同じですよね。<br><code>Seq(1,2,3).map { v =&gt; print(v) }</code> みたいに書くときと同じです。</p>
+<p>普段使っているmapメソッドも同じですよね。<br><code>Seq(1,2,3).map { v => print(v) }</code> みたいに書くときと同じです。</p>
 <p>ちなみにこの<code>main.scala.html</code>のファイルが<code>content.scala.html</code>という名前だと、以下のようになります。</p>
 <pre><code language="language-html" class="language-html">@content(&#34;一覧画面&#34;) {
 }
@@ -1010,7 +1010,7 @@ def delete() = Action { implicit request: Request[AnyContent] =&gt;
 <p>ここで<code>src</code>属性に<code>routes.Assets.versioned()</code>という記述がありますが、これは他のアクションと同様にroutesにしっかりと記述されています。</p>
 <pre><code>GET     /assets/*file               controllers.Assets.versioned(path=&#34;/public&#34;, file: Asset)
 </code></pre>
-<p>routesにあるようにデフォルトでは<code>public</code>フォルダと関連づけられており<code>routes.Assets.versioned(&#34;javascripts/main.js&#34;)</code>は<code>public/javascripts/main.js</code>を対象に読み込むということになります。</p>
+<p>routesにあるようにデフォルトでは<code>public</code>フォルダと関連づけられており<code>routes.Assets.versioned("javascripts/main.js")</code>は<code>public/javascripts/main.js</code>を対象に読み込むということになります。</p>
 <p>またversionedはjs-hogehogeのようなdigestが設定されたファイルも処理できるような作りになっています。<br> versionedについては、本番環境にデプロイすることを考慮しないうちは、気にせずにそう言うものだと覚えていただいても構いません。</p>
 <p>ファイルの読み込みはcssについても同様です。<br> 今回は試しにreset.cssの中の一つである<code>sanitize.css</code>を外部から読み込んでいます。</p>
 <pre><code>&lt;link href=&#34;https://unpkg.com/sanitize.css&#34; rel=&#34;stylesheet&#34;/&gt;

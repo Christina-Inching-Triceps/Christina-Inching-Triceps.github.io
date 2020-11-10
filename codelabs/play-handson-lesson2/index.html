@@ -724,7 +724,7 @@ Caused by: java.time.format.DateTimeParseException: Text &#39;2020-03-15 13:15:0
         at slick.relational.ProductResultConverter.read(ResultConverter.scala:54)
         at slick.relational.ProductResultConverter.read(ResultConverter.scala:44)
 </code></pre>
-<p>重要な部分は以下の部分です。<br><code>Execution exception[[DateTimeParseException: Text &#39;2020-03-15 13:15:00&#39; could not be parsed at index 10]]</code></p>
+<p>重要な部分は以下の部分です。<br><code>Execution exception[[DateTimeParseException: Text '2020-03-15 13:15:00' could not be parsed at index 10]]</code></p>
 <p>日付型のparseでエラーになっていますね。</p>
 <p>ここから少し難しくなるのですが、このエラーを調査していきます。</p>
 <p>エラー調査のために、先ほどのログをもう少し細かくみてみましょう。<br> そうすると以下のような出力を見つけることができると思います。<br><code>at slick.jdbc.MySQLProfile$JdbcTypes$$anon$4.getValue(MySQLProfile.scala:389)</code></p>
@@ -1184,7 +1184,7 @@ trait LocalDateTimeColumMapper {
   )
 </code></pre>
 <p>さらにモデル側で以下のように宣言をしてみます。</p>
-<p><code>val createdAt: Rep[LocalDateTime] = column[LocalDateTime](&#34;created_at&#34;)</code></p>
+<p><code>val createdAt: Rep[LocalDateTime] = column[LocalDateTime]("created_at")</code></p>
 <p>この場合Profileに定義されているLocalDateTimeのマッピングが先に処理されて、その後にMappedColumnTypeの処理に移ろうします。<br> なので結局はMySqlProfile側のgetValueのLocalDateTime.parseの箇所で落ちてしまうんです。</p>
 <p>かといってStringに対してのmappingにしてしまうと、普通にStringで使いたいものについても変換がかかってしまいます。<br> そのためLocalDateTimeを直接使うことができません。</p>
 <p>そのため一度経由するためのクラスとして独自の<code>MySQLDateTime</code>という型が必要になってしまったと言うわけです。<br> 既に若干冗長になってしまいました。</p>
@@ -1403,7 +1403,7 @@ class TweetController @Inject()(
 }
 </code></pre>
 <p>修正しているのは2ヶ所あり、一つが<code>Action async</code>の部分。<br> もう一つが残りのfor式の部分ですね。</p>
-<p>for部分は慣れていないとわかりづらいかもしれませんね。<br> scalaのfor式はmap/flatMapの糖衣構文になっており、今回のようにforブロックの<code>&lt;-</code>部分が1段の展開の場合には以下のコードと同じになります。</p>
+<p>for部分は慣れていないとわかりづらいかもしれませんね。<br> scalaのfor式はmap/flatMapの糖衣構文になっており、今回のようにforブロックの<code><-</code>部分が1段の展開の場合には以下のコードと同じになります。</p>
 <pre><code language="language-scala" class="language-scala">tweetRepository.all().map(results =&gt;
   Ok(views.html.tweet.list(results))
 )
