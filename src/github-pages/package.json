@@ -23,7 +23,7 @@
     "@angular/platform-browser": "~9.1.0",
     "@angular/platform-browser-dynamic": "~9.1.0",
     "@angular/router": "~9.1.0",
-    "pug": "2.0.4",
+    "pug": "3.0.1",
     "pug-cli": "^1.0.0-alpha6",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
